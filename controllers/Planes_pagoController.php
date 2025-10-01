@@ -1,5 +1,9 @@
 <?php
 class Planes_pagoController {
+    /**
+     * Constructor. Verifica si el usuario ha iniciado sesión.
+     * Si no, lo redirige a la página de login.
+     */
     public function __construct() {
         if (!isset($_SESSION['user_id'])) {
             header('Location: index.php?controller=auth&action=login');
@@ -7,6 +11,9 @@ class Planes_pagoController {
         }
     }
 
+    /**
+     * Muestra la página principal de gestión de planes de pago.
+     */
     public function index() {
         $page_title = "Gestión de Planes de Pago";
         $active_page = "planes_pago";
@@ -14,44 +21,4 @@ class Planes_pagoController {
         require_once __DIR__ . '/../views/layouts/main.php';
     }
 
-    public function crear() {
-        $page_title = "Crear Plan de Pago";
-        $active_page = "planes_pago";
-        $child_view = __DIR__ . '/../views/planes_pago/crear.php';
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // TODO: Procesar formulario
-            header('Location: index.php?controller=planes_pago');
-            exit;
-        }
-        require_once __DIR__ . '/../views/layouts/main.php';
-    }
-
-    public function editar() {
-        $id = $_GET['id'] ?? null;
-        if (!$id) {
-            header('Location: index.php?controller=planes_pago');
-            exit;
-        }
-        $page_title = "Editar Plan de Pago";
-        $active_page = "planes_pago";
-        $child_view = __DIR__ . '/../views/planes_pago/editar.php';
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // TODO: Procesar formulario
-            header('Location: index.php?controller=planes_pago');
-            exit;
-        }
-        require_once __DIR__ . '/../views/layouts/main.php';
-    }
-
-    public function ver() {
-        $id = $_GET['id'] ?? null;
-        if (!$id) {
-            header('Location: index.php?controller=planes_pago');
-            exit;
-        }
-        $page_title = "Ver Plan de Pago";
-        $active_page = "planes_pago";
-        $child_view = __DIR__ . '/../views/planes_pago/ver.php';
-        require_once __DIR__ . '/../views/layouts/main.php';
-    }
 }

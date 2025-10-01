@@ -4,10 +4,16 @@ require_once __DIR__ . '/../models/UserModel.php';
 class AuthController {
     private $userModel;
 
+    /**
+     * Constructor. Inicializa el modelo de usuario.
+     */
     public function __construct() {
         $this->userModel = new UserModel();
     }
 
+    /**
+        * Muestra el formulario de login y maneja la autenticación.
+     */
     public function login() {
         // La sesión se iniciará en el router para evitar redundancia
 
@@ -53,6 +59,10 @@ class AuthController {
         require_once __DIR__ . '/../views/auth/login.php';
     }
     
+    /**
+     * Cierra la sesión del usuario.
+     * Destruye la sesión actual y redirige al formulario de login.
+     */
     public function logout() {
         // La sesión ya debería estar iniciada
         session_destroy();
