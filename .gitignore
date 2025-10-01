@@ -1,29 +1,6 @@
-# Archivos de configuración sensibles
-config/database.php
-.env
-
-# Logs
-*.log
-php_error.log
-
-# Archivos temporales
-*.tmp
-*.swp
-*~
-
-# Dependencias (si usas Composer)
+# Ignorar dependencias de Composer
 /vendor/
-
-# Archivos del sistema
-.DS_Store
-Thumbs.db
-
-# IDEs
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-
-# Archivos de usuario subidos
-/public/uploads/*
-!/public/uploads/.gitkeep
+# Ignorar archivo de entorno local
+.env
+# Ignorar archivo de log de PHP
+php_error.log

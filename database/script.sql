@@ -42,19 +42,19 @@ INSERT INTO usuarios (
     estado
 ) VALUES 
 -- Contraseña: admin123
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 
+('admin', '$2y$10$hPG2HMzMPQIx6yshnCMzKO7n5eIZV8mBh9zCnM1LUxxKPlog.qHWO', 
 'admin@hotel.com', 
 (SELECT id FROM roles WHERE nombre = 'admin'), 
 'activo'),
 
 -- Contraseña: gerente123
-('gerente', '$2y$10$wkOPX5.tGS5rjH1/Nvs0g.RZ39kU4K8ICaOKhf9KK5JlHArYoqEq2', 
+('gerente', '$2y$10$jW7E.ekqTOk8EcTnvNfde./IWW6eeGbp2aLLreZ3vo2hHFTT8.cJG', 
 'gerente@hotel.com', 
 (SELECT id FROM roles WHERE nombre = 'gerente'), 
 'activo'),
 
 -- Contraseña: recepcion123
-('recepcion', '$2y$10$wBv.lHvFcIHDhKpF9H1tie3KRnYxQWsf.UQXO0.XxDGSwVxIpx6SO', 
+('recepcion', '$2y$10$EiXsh3Ut2ee2uoKoNi6DieeP4xD.qY1IYHVL5PZdQkyULHyMFFUH6', 
 'recepcion@hotel.com', 
 (SELECT id FROM roles WHERE nombre = 'recepcion'), 
 'activo');

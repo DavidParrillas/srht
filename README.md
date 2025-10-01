@@ -35,26 +35,24 @@ Este proyecto es un sistema web para la gestión de reservaciones hoteleras, cli
      ```
 
 3. **Configura la conexión a la base de datos**
-   - Edita el archivo `config/database.php` y coloca tus credenciales:
-     ```php
-     return [
-         'host' => '127.0.0.1',
-         'dbname' => 'srht',
-         'user' => 'tu_usuario',
-         'password' => 'tu_contraseña',
-     ];
-     ```
-
-4. **Configura permisos de carpetas**
-   - Da permisos de escritura a la carpeta de logs si usas logs personalizados:
+   - Copia el archivo de ejemplo `.env.example` a un nuevo archivo llamado `.env`:
      ```bash
-     chmod 664 php_error.log
+     cp .env.example .env
+     ```
+   - Edita el archivo `.env` y coloca tus credenciales de base de datos. Este archivo es ignorado por Git para proteger tu información sensible.
+     ```dotenv
+     DB_HOST=127.0.0.1
+     DB_NAME=srht
+     DB_USER=tu_usuario
+     DB_PASSWORD=tu_contraseña
      ```
 
-5. **Inicia el servidor embebido de PHP**
-   ```bash
-   php -S localhost:8000 -t .
-   ```
+4. **Inicia el servidor embebido de PHP**
+   - El archivo `php_error.log` se creará automáticamente la primera vez que se registre un error. Asegúrate de que el servidor web tenga permisos para escribir en la raíz del proyecto.
+     ```bash
+     php -S localhost:8000 -t .
+     ```
+
    Accede a [http://localhost:8000](http://localhost:8000) en tu navegador.
 
 ## Usuarios de prueba
