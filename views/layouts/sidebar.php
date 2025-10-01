@@ -25,6 +25,9 @@
             <li class="<?php echo $active_page == 'usuarios' ? 'active' : ''; ?>">
                 <a href="index.php?controller=usuarios">Usuarios</a>
             </li>
+            <li>
+                <a href="index.php?controller=auth&action=logout">Cerrar Sesión</a>
+            </li>
         </ul>
     </nav>
 </aside>
