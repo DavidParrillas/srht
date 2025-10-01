@@ -1,32 +1,46 @@
+<?php
+/**
+ * Función auxiliar para renderizar un elemento de la barra de navegación.
+ * Esto reduce la repetición y hace el código más fácil de leer y mantener.
+ *
+ * @param string $iconClass Clase del icono (ej. 'fa-users').
+ * @param string $text El texto del enlace.
+ * @param string $controller El nombre del controlador al que enlaza.
+ * @param string $active_page La página activa actual.
+ */
+function render_nav_item($iconClass, $text, $controller, $active_page) {
+    $class = ($active_page == $controller) ? 'active' : '';
+    $url = "index.php?controller={$controller}";
+    echo "<li class=\"{$class}\">";
+    echo "    <a href=\"{$url}\">";
+    // Asumiendo que se usa Font Awesome para los iconos
+    echo "        <i class=\"fas {$iconClass}\"></i> <span>{$text}</span>";
+    echo "    </a>";
+    echo "</li>";
+}
+?>
 <aside class="main-sidebar">
     <nav class="sidebar-nav">
         <ul>
-            <li class="<?php echo $active_page == 'dashboard' ? 'active' : ''; ?>">
-                <a href="index.php?controller=home">Dashboard</a>
-            </li>
-            <li class="<?php echo $active_page == 'reservaciones' ? 'active' : ''; ?>">
-                <a href="index.php?controller=reservaciones">Reservaciones</a>
-            </li>
-            <li class="<?php echo $active_page == 'clientes' ? 'active' : ''; ?>">
-                <a href="index.php?controller=clientes">Clientes</a>
-            </li>
-            <li class="<?php echo $active_page == 'habitaciones' ? 'active' : ''; ?>">
-                <a href="index.php?controller=habitaciones">Habitaciones</a>
-            </li>
-            <li class="<?php echo $active_page == 'paquetes' ? 'active' : ''; ?>">
-                <a href="index.php?controller=paquetes">Paquetes y Tarifas</a>
-            </li>
-            <li class="<?php echo $active_page == 'planes_pago' ? 'active' : ''; ?>">
-                <a href="index.php?controller=planes_pago">Planes de Pago</a>
-            </li>
-            <li class="<?php echo $active_page == 'reportes' ? 'active' : ''; ?>">
-                <a href="index.php?controller=reportes">Reportes</a>
-            </li>
-            <li class="<?php echo $active_page == 'usuarios' ? 'active' : ''; ?>">
-                <a href="index.php?controller=usuarios">Usuarios</a>
-            </li>
+            <?php render_nav_item('fa-tachometer-alt', 'Dashboard', 'home', $active_page); ?>
+            <?php render_nav_item('fa-calendar-check', 'Reservaciones', 'reservaciones', $active_page); ?>
+            <?php render_nav_item('fa-users', 'Clientes', 'clientes', $active_page); ?>
+            <?php render_nav_item('fa-bed', 'Habitaciones', 'habitaciones', $active_page); ?>
+            <?php render_nav_item('fa-box-open', 'Paquetes y Tarifas', 'paquetes', $active_page); ?>
+            <?php render_nav_item('fa-credit-card', 'Planes de Pago', 'planes_pago', $active_page); ?>
+            <?php render_nav_item('fa-chart-line', 'Reportes', 'reportes', $active_page); ?>
+            
+            <?php
+            // Ejemplo de cómo mostrar un enlace solo a ciertos roles
+            if (isset($_SESSION['role']) && $_SESSION['role'] === 'Administrador') {
+                render_nav_item('fa-user-shield', 'Usuarios', 'usuarios', $active_page);
+            }
+            ?>
+
             <li>
-                <a href="index.php?controller=auth&action=logout">Cerrar Sesión</a>
+                <a href="index.php?controller=auth&action=logout">
+                    <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+                </a>
             </li>
         </ul>
     </nav>
