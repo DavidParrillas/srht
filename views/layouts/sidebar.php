@@ -1,13 +1,4 @@
 <?php
-/**
- * Función auxiliar para renderizar un elemento de la barra de navegación.
- * Esto reduce la repetición y hace el código más fácil de leer y mantener.
- *
- * @param string $iconClass Clase del icono (ej. 'fa-users').
- * @param string $text El texto del enlace.
- * @param string $controller El nombre del controlador al que enlaza.
- * @param string $active_page La página activa actual.
- */
 function render_nav_item($iconClass, $text, $controller, $active_page) {
     $class = ($active_page == $controller) ? 'active' : '';
     $url = "index.php?controller={$controller}";
@@ -29,7 +20,6 @@ function render_nav_item($iconClass, $text, $controller, $active_page) {
             <?php render_nav_item('fa-box-open', 'Paquetes y Tarifas', 'paquetes', $active_page); ?>
             <?php render_nav_item('fa-credit-card', 'Planes de Pago', 'planes_pago', $active_page); ?>
             <?php render_nav_item('fa-chart-line', 'Reportes', 'reportes', $active_page); ?>
-            
             <?php
             // Ejemplo de cómo mostrar un enlace solo a ciertos roles
             if (isset($_SESSION['role']) && $_SESSION['role'] === 'Administrador') {
