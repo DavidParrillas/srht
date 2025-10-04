@@ -20,7 +20,7 @@ Este proyecto es un sistema web para la gestión de reservaciones hoteleras, cli
 
 1. **Clona el repositorio**
    ```bash
-   git clone https://github.com/tu-usuario/srht.git
+   git clone https://github.com/DavidParrillas/srht.git
    cd srht
    ```
 
