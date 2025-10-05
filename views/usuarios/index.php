@@ -17,11 +17,32 @@
             </tr>
         </thead>
         <tbody>
-
-            <tr>
-                <td colspan="5" class="text-center">No hay usuarios para mostrar. La lógica para cargarlos desde la base de datos aún no está implementada.</td>
-            </tr>
-            <?php /* } */ ?>
+            <?php if (empty($usuarios)): ?>
+                <tr>
+                    <td colspan="5" class="text-center">No hay usuarios para mostrar.</td>
+                </tr>
+            <?php else: ?>
+                <?php foreach ($usuarios as $usuario): ?>
+                    <tr>
+                        <td data-label="Usuario"><?php echo htmlspecialchars($usuario['nombre_usuario']); ?></td>
+                        <td data-label="Correo"><?php echo htmlspecialchars($usuario['correo']); ?></td>
+                        <td data-label="Rol">
+                            <span class="badge badge-primary"><?php echo htmlspecialchars($usuario['role_name']); ?></span>
+                        </td>
+                        <td data-label="Estado">
+                            <span class="status-indicator <?php echo $usuario['estado'] == 'activo' ? 'status-disponible' : 'status-ocupado'; ?>">
+                                <?php echo $usuario['estado'] == 'activo' ? 'Activo' : 'Inactivo'; ?>
+                            </span>
+                        </td>
+                        <td data-label="Acciones">
+                            <div class="action-buttons">
+                                <a href="#" class="btn-action btn-edit" title="Editar"><i class="fas fa-edit"></i></a>
+                                <a href="#" class="btn-action btn-delete" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>

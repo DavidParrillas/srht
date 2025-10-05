@@ -1,14 +1,14 @@
 <?php
-require_once __DIR__ . '/../models/UserModel.php';
+require_once __DIR__ . '/../models/Usuario.php';
 
 class AuthController {
-    private $userModel;
+    private $usuario;
 
     /**
      * Constructor. Inicializa el modelo de usuario.
      */
     public function __construct() {
-        $this->userModel = new UserModel();
+        $this->usuario = new Usuario();
     }
 
     /**
@@ -22,7 +22,7 @@ class AuthController {
             $password = $_POST['contrasena'] ?? '';
             
             try {
-                $user = $this->userModel->findByUsername($username);
+                $user = $this->usuario->findByUsername($username);
                 
                 error_log('Intento login usuario: ' . $username);
                 if ($user) {
@@ -36,7 +36,7 @@ class AuthController {
                         $_SESSION['username'] = $user['nombre_usuario'];
                         $_SESSION['role'] = $user['role_name'];
                         // Actualizar último login
-                        $this->userModel->updateLastLogin($user['id']);
+                        $this->usuario->updateLastLogin($user['id']);
                         error_log("Login exitoso - Usuario: $username, Rol: {$user['role_name']}");
                         header('Location: index.php?controller=home');
                         exit;

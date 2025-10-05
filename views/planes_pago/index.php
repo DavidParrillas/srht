@@ -16,9 +16,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td colspan="4" class="text-center">No hay planes de pago para mostrar. La lógica para cargarlos desde la base de datos aún no está implementada.</td>
-            </tr>
+            
         </tbody>
     </table>
 </div>

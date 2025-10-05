@@ -1,5 +1,5 @@
 <?php
-class UserModel {
+class Usuario {
     private $pdo;
 
     public function __construct() {
@@ -37,5 +37,14 @@ class UserModel {
             error_log("Error al actualizar último login: " . $e->getMessage());
             return false;
         }
+    }
+
+    public function getAll() {
+        $query = "SELECT u.*, r.nombre as role_name 
+                FROM usuarios u 
+                JOIN roles r ON u.rol_id = r.id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

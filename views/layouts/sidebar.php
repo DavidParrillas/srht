@@ -4,7 +4,6 @@ function render_nav_item($iconClass, $text, $controller, $active_page) {
     $url = "index.php?controller={$controller}";
     echo "<li class=\"{$class}\">";
     echo "    <a href=\"{$url}\">";
-    // Asumiendo que se usa Font Awesome para los iconos
     echo "        <i class=\"fas {$iconClass}\"></i> <span>{$text}</span>";
     echo "    </a>";
     echo "</li>";
@@ -20,12 +19,15 @@ function render_nav_item($iconClass, $text, $controller, $active_page) {
             <?php render_nav_item('fa-box-open', 'Paquetes y Tarifas', 'paquetes', $active_page); ?>
             <?php render_nav_item('fa-credit-card', 'Planes de Pago', 'planes_pago', $active_page); ?>
             <?php render_nav_item('fa-chart-line', 'Reportes', 'reportes', $active_page); ?>
+            <?php render_nav_item('fa-user-shield', 'Usuarios', 'usuarios', $active_page); ?>
             <?php
+            
             // Ejemplo de cómo mostrar un enlace solo a ciertos roles
-            if (isset($_SESSION['role']) && $_SESSION['role'] === 'Administrador') {
+            if (isset($_SESSION['role']) && $_SESSION['role'] === 'recepcion') {
                 render_nav_item('fa-user-shield', 'Usuarios', 'usuarios', $active_page);
             }
             ?>
+            
 
             <li>
                 <a href="index.php?controller=auth&action=logout">

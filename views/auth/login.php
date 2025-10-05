@@ -12,13 +12,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Estilos Personalizados -->
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/login.css">
 </head>
     <body class="login-page">
         <div class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <img src="assets/images/logo_Blanco.png" alt="Logo" class="login-logo">
+                <img src="/assets/images/log.png" alt="Logo" class="login-logo">
                 <h1>Iniciar Sesión</h1>
             </div>
             

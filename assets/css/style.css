@@ -424,14 +424,6 @@ body:not(.login-page) {
     background: var(--bg-light);
 }
 
-.nav-tabs .nav-link.active {
-    color: var(--primary-color);
-    background: var(--bg-lighter);
-    border-color: var(--border-color);
-    border-bottom-color: var(--bg-lighter);
-    font-weight: 600;
-}
-
 .tab-content {
     background: var(--bg-lighter);
     padding: var(--spacing-lg);
@@ -1973,14 +1965,14 @@ textarea.form-control {
 /* Efecto hover */
 .sidebar-nav ul li a:hover {
     background: var(--sidebar-hover-bg);
-    color: #ffffff;
+    color: var(--text-primary);
     padding-left: 24px;
 }
 
 /* Estado activo */
 .sidebar-nav ul li.active a {
     background: var(--sidebar-active-bg);
-    color: #ffffff;
+    color: var(--text-primary);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
