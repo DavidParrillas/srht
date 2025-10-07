@@ -18,6 +18,22 @@ Este proyecto es un sistema web para la gestión de reservaciones hoteleras, cli
 
 ## Instalación
 
+### Dependencias
+
+Para instalar PHP y MySQL en sistemas basados en Debian/Ubuntu, puedes usar los siguientes comandos:
+
+**MySQL**
+```bash
+sudo apt update
+sudo apt install mysql-server
+```
+
+**PHP**
+```bash
+sudo apt update
+sudo apt install php libapache2-mod-php php-mysql
+```
+
 1. **Clona el repositorio**
    ```bash
    git clone https://github.com/DavidParrillas/srht.git
