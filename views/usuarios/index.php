@@ -1,6 +1,6 @@
 <div class="page-header">
     <h1><?php echo htmlspecialchars($page_title ?? 'Gestión de Usuarios'); ?></h1>
-    <a href="index.php?controller=usuarios&action=create" class="btn btn-primary">
+    <a href="index.php?controller=usuarios&action=crear" class="btn btn-primary">
         <i class="fas fa-user-plus"></i> Agregar Usuario
     </a>
 </div>
@@ -12,27 +12,21 @@
                 <th>Nombre de Usuario</th>
                 <th>Correo Electrónico</th>
                 <th>Rol</th>
-                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($usuarios)): ?>
                 <tr>
-                    <td colspan="5" class="text-center">No hay usuarios para mostrar.</td>
+                    <td colspan="4" class="text-center">No hay usuarios para mostrar.</td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($usuarios as $usuario): ?>
                     <tr>
-                        <td data-label="Usuario"><?php echo htmlspecialchars($usuario['nombre_usuario']); ?></td>
-                        <td data-label="Correo"><?php echo htmlspecialchars($usuario['correo']); ?></td>
+                        <td data-label="Usuario"><?php echo htmlspecialchars($usuario['nombre_usuario'] ?? ''); ?></td>
+                        <td data-label="Correo"><?php echo htmlspecialchars($usuario['correo'] ?? ''); ?></td>
                         <td data-label="Rol">
-                            <span class="badge badge-primary"><?php echo htmlspecialchars($usuario['role_name']); ?></span>
-                        </td>
-                        <td data-label="Estado">
-                            <span class="status-indicator <?php echo $usuario['estado'] == 'activo' ? 'status-disponible' : 'status-ocupado'; ?>">
-                                <?php echo $usuario['estado'] == 'activo' ? 'Activo' : 'Inactivo'; ?>
-                            </span>
+                            <span class="badge badge-primary"><?php echo htmlspecialchars($usuario['role_name'] ?? ''); ?></span>
                         </td>
                         <td data-label="Acciones">
                             <div class="action-buttons">

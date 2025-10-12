@@ -24,7 +24,7 @@
             
             <form action="index.php?controller=auth&action=login" method="POST">
                     <?php if (isset($error_message)): ?>
-                        <div class="error-message" style="color:red; margin-bottom:10px;">
+                        <div class="error-message" style="margin-bottom:10px;">
                             <?php echo htmlspecialchars($error_message); ?>
                         </div>
                     <?php endif; ?>
