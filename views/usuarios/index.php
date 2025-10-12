@@ -23,15 +23,15 @@
             <?php else: ?>
                 <?php foreach ($usuarios as $usuario): ?>
                     <tr>
-                        <td data-label="Usuario"><?php echo htmlspecialchars($usuario['nombre_usuario'] ?? ''); ?></td>
-                        <td data-label="Correo"><?php echo htmlspecialchars($usuario['correo'] ?? ''); ?></td>
+                        <td data-label="Usuario"><?php echo htmlspecialchars($usuario['NombreUsuario'] ?? ''); ?></td>
+                        <td data-label="Correo"><?php echo htmlspecialchars($usuario['CorreoUsuario'] ?? ''); ?></td>
                         <td data-label="Rol">
-                            <span class="badge badge-primary"><?php echo htmlspecialchars($usuario['role_name'] ?? ''); ?></span>
+                            <span class="badge bg-primary"><?php echo htmlspecialchars($usuario['NombreRol'] ?? ''); ?></span>
                         </td>
                         <td data-label="Acciones">
                             <div class="action-buttons">
-                                <a href="#" class="btn-action btn-edit" title="Editar"><i class="fas fa-edit"></i></a>
-                                <a href="#" class="btn-action btn-delete" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
+                                <a href="index.php?controller=usuarios&action=editar&id=<?php echo $usuario['idUsuario']; ?>" class="btn-action btn-edit" title="Editar"><i class="fas fa-edit"></i></a>
+                                <a href="index.php?controller=usuarios&action=eliminar&id=<?php echo $usuario['idUsuario']; ?>" class="btn-action btn-delete" title="Eliminar" onclick="return confirm('¿Está seguro de que desea eliminar a este usuario?');"><i class="fas fa-trash-alt"></i></a>
                             </div>
                         </td>
                     </tr>

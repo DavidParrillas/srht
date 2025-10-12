@@ -43,24 +43,19 @@ sudo apt install php libapache2-mod-php php-mysql
 2. **Configura la base de datos**
    - Crea una base de datos en MySQL:
      ```sql
-     CREATE DATABASE srht CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+     CREATE DATABASE hoteltorremolinos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
      ```
    - Importa el script de tablas y datos semilla:
      ```bash
-     mysql -u tu_usuario -p srht < database/script.sql
+     mysql -u tu_usuario -p hoteltorremolinos < database/script.sql
      ```
 
 3. **Configura la conexión a la base de datos**
-   - Copia el archivo de ejemplo `.env.example` a un nuevo archivo llamado `.env`:
-     ```bash
-     cp .env.example .env
-     ```
-   - Edita el archivo `.env` y coloca tus credenciales de base de datos. Este archivo es ignorado por Git para proteger tu información sensible.
-     ```dotenv
-     DB_HOST=127.0.0.1
-     DB_NAME=srht
-     DB_USER=tu_usuario
-     DB_PASSWORD=tu_contraseña
+   - Abre el archivo `config/database.php`.
+   - Edita los valores para que coincidan con tus credenciales de MySQL.
+     ```php
+     'user' => 'tu_usuario', // Por ejemplo, 'root'
+     'password' => 'tu_contraseña' // Puede estar vacío '' si no tienes contraseña
      ```
 
 4. **Inicia el servidor embebido de PHP**
@@ -74,15 +69,15 @@ sudo apt install php libapache2-mod-php php-mysql
 ## Usuarios de prueba
 
 - **Admin:**  
-  Usuario: `admin`  
+  Correo: `admin@torremolinos.com`  
   Contraseña: `admin123`
 
 - **Gerente:**  
-  Usuario: `gerente`  
+  Correo: `gerente@torremolinos.com`  
   Contraseña: `gerente123`
 
 - **Recepción:**  
-  Usuario: `recepcion`  
+  Correo: `recepcion@torremolinos.com`  
   Contraseña: `recepcion123`
 
 ## Estructura del proyecto

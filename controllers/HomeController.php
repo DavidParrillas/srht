@@ -1,24 +1,26 @@
 <?php
 class HomeController {
     /**
-     * Constructor. Verifica si el usuario ha iniciado sesión.
-     * Si no, lo redirige a la página de login.
+     * Constructor.
      */
     public function __construct() {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: index.php?controller=auth&action=login');
-            exit;
+        // Iniciar sesión si no está iniciada para poder acceder a $_SESSION
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
     }
 
     /**
-     * Muestra el dashboard principal.
+     * Redirige al dashboard si el usuario está logueado,
+     * o a la página de login si no lo está.
      */
     public function index() {
-        $page_title = "Dashboard";
-        $active_page = "dashboard";
-        $child_view = "views/dashboard/content.php";
-        
-        include("views/layouts/main.php");
+        if (isset($_SESSION['usuario_id'])) {
+            header('Location: index.php?controller=dashboard&action=index');
+            exit();
+        } else {
+            header('Location: index.php?controller=auth&action=mostrarLogin');
+            exit();
+        }
     }
 }

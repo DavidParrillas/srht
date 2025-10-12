@@ -1,360 +1,353 @@
 <?php
 /**
- * Usuario - Modelo de Usuario
+ * Modelo Usuario
  * Sistema de Reservas Hotel Torremolinos (SRHT)
  * 
- * Gestiona operaciones CRUD y autenticación de usuarios del sistema
- * Trabaja con las tablas Usuario y Rol
+ * Gestiona las operaciones CRUD y consultas relacionadas con usuarios del sistema
+ * Tabla: Usuario
  */
 
 class Usuario {
-    private $pdo;
-
+    
+    // Propiedades de la clase que mapean los campos de la tabla
+    private $idUsuario;
+    private $idRol;
+    private $NombreUsuario;
+    private $ContrasenaUsuario;
+    private $CorreoUsuario;
+    
+    // Conexión a la base de datos
+    private $conexion;
+    
     /**
-     * Constructor - Establece conexión con la base de datos
+     * Constructor
+     * @param PDO $db Conexión a la base de datos
      */
-    public function __construct() {
-        $dbConfig = require __DIR__ . '/../config/database.php';
-        try {
-            $this->pdo = new PDO(
-                "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']};charset=utf8mb4",
-                $dbConfig['user'],
-                $dbConfig['password']
-            );
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log('Error de conexión a la base de datos: ' . $e->getMessage());
-            die('No se pudo conectar a la base de datos.');
-        }
+    public function __construct($db) {
+        $this->conexion = $db;
     }
-
-    /**
-     * Autenticar usuario con nombre de usuario y contraseña
-     * 
-     * @param string $nombreUsuario Nombre de usuario
-     * @param string $contrasena Contraseña en texto plano
-     * @return array|false Datos del usuario si autenticación exitosa, false si falla
-     */
-    public function autenticar($nombreUsuario, $contrasena) {
-        // Buscar usuario por nombre
-        $usuario = $this->findByUsername($nombreUsuario);
-        
-        if (!$usuario) {
-            return false;
-        }
-        
-        // Verificar contraseña
-        // NOTA: Asumiendo que las contraseñas están hasheadas con password_hash()
-        // Si las contraseñas están en texto plano (NO RECOMENDADO), usar: $contrasena === $usuario['ContrasenaUsuario']
-        if (password_verify($contrasena, $usuario['ContrasenaUsuario'])) {
-            // Actualizar fecha de último login
-            $this->updateLastLogin($usuario['idUsuario']);
-            
-            // Retornar datos del usuario (sin la contraseña por seguridad)
-            unset($usuario['ContrasenaUsuario']);
-            return $usuario;
-        }
-        
-        return false;
+    
+    // ==================== GETTERS Y SETTERS ====================
+    
+    public function getIdUsuario() {
+        return $this->idUsuario;
     }
-
-    /**
-     * Buscar usuario por nombre de usuario
-     * 
-     * @param string $username Nombre de usuario
-     * @return array|false Datos del usuario o false si no existe
-     */
-    public function findByUsername($username) {
-        $query = "SELECT u.idUsuario, u.NombreUsuario, u.ContrasenaUsuario, 
-                        u.CorreoUsuario, u.idRol, r.NombreRol as role_name 
-                FROM Usuario u 
-                INNER JOIN Rol r ON u.idRol = r.idRol 
-                WHERE u.NombreUsuario = :username";
-        
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute(['username' => $username]);
-        return $stmt->fetch();
+    
+    public function setIdUsuario($idUsuario) {
+        $this->idUsuario = $idUsuario;
     }
-
-    /**
-     * Buscar usuario por ID
-     * 
-     * @param int $id ID del usuario
-     * @return array|false Datos del usuario o false si no existe
-     */
-    public function findById($id) {
-        $query = "SELECT u.idUsuario, u.NombreUsuario, u.CorreoUsuario, 
-                        u.idRol, r.NombreRol, r.DescripcionRol
-                FROM Usuario u 
-                INNER JOIN Rol r ON u.idRol = r.idRol 
-                WHERE u.idUsuario = :id";
-        
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute(['id' => $id]);
-        return $stmt->fetch();
+    
+    public function getIdRol() {
+        return $this->idRol;
     }
-
-    /**
-     * Buscar usuario por email
-     * 
-     * @param string $email Correo electrónico
-     * @return array|false Datos del usuario o false si no existe
-     */
-    public function findByEmail($email) {
-        $query = "SELECT u.idUsuario, u.NombreUsuario, u.CorreoUsuario, 
-                        u.idRol, r.NombreRol
-                FROM Usuario u 
-                INNER JOIN Rol r ON u.idRol = r.idRol 
-                WHERE u.CorreoUsuario = :email";
-        
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute(['email' => $email]);
-        return $stmt->fetch();
+    
+    public function setIdRol($idRol) {
+        $this->idRol = $idRol;
     }
-
-    /**
-     * Obtener todos los usuarios del sistema
-     * 
-     * @return array Lista de todos los usuarios
-     */
-    public function getAll() {
-                $query = "SELECT u.idUsuario, u.NombreUsuario as nombre_usuario, u.CorreoUsuario as correo, 
-                                 u.idRol, r.NombreRol as role_name, r.DescripcionRol
-                          FROM Usuario u 
-                          INNER JOIN Rol r ON u.idRol = r.idRol
-                          ORDER BY u.NombreUsuario ASC";        
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll();
+    
+    public function getNombreUsuario() {
+        return $this->NombreUsuario;
     }
-
-    /**
-     * Obtener usuarios por rol
-     * 
-     * @param int $idRol ID del rol
-     * @return array Lista de usuarios con ese rol
-     */
-    public function getByRol($idRol) {
-        $query = "SELECT u.idUsuario, u.NombreUsuario, u.CorreoUsuario, 
-                        u.idRol, r.NombreRol
-                FROM Usuario u 
-                INNER JOIN Rol r ON u.idRol = r.idRol 
-                WHERE u.idRol = :idRol
-                ORDER BY u.NombreUsuario ASC";
-        
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute(['idRol' => $idRol]);
-        return $stmt->fetchAll();
+    
+    public function setNombreUsuario($NombreUsuario) {
+        $this->NombreUsuario = $NombreUsuario;
     }
-
+    
+    public function getContrasenaUsuario() {
+        return $this->ContrasenaUsuario;
+    }
+    
+    public function setContrasenaUsuario($ContrasenaUsuario) {
+        // Encriptar contraseña antes de guardar
+        $this->ContrasenaUsuario = password_hash($ContrasenaUsuario, PASSWORD_DEFAULT);
+    }
+    
+    public function getCorreoUsuario() {
+        return $this->CorreoUsuario;
+    }
+    
+    public function setCorreoUsuario($CorreoUsuario) {
+        $this->CorreoUsuario = $CorreoUsuario;
+    }
+    
+    // ==================== MÉTODOS CRUD ====================
+    
     /**
      * Crear un nuevo usuario
-     * 
-     * @param array $datos Datos del usuario (NombreUsuario, ContrasenaUsuario, CorreoUsuario, idRol)
-     * @return int|false ID del usuario creado o false si falla
+     * @return bool True si se creó exitosamente, false en caso contrario
      */
-    public function crear($datos) {
+    public function crear() {
         try {
-            // Verificar que el nombre de usuario no exista
-            if ($this->findByUsername($datos['NombreUsuario'])) {
-                throw new Exception('El nombre de usuario ya existe');
-            }
-
-            // Verificar que el email no exista
-            if ($this->findByEmail($datos['CorreoUsuario'])) {
-                throw new Exception('El correo electrónico ya está registrado');
-            }
-
-            // Hashear la contraseña
-            $contrasenaHash = password_hash($datos['ContrasenaUsuario'], PASSWORD_DEFAULT);
-
             $query = "INSERT INTO Usuario (idRol, NombreUsuario, ContrasenaUsuario, CorreoUsuario) 
-                    VALUES (:idRol, :nombreUsuario, :contrasena, :email)";
+                    VALUES (:idRol, :nombreUsuario, :contrasena, :correo)";
             
-            $stmt = $this->pdo->prepare($query);
-            $resultado = $stmt->execute([
-                'idRol' => $datos['idRol'],
-                'nombreUsuario' => $datos['NombreUsuario'],
-                'contrasena' => $contrasenaHash,
-                'email' => $datos['CorreoUsuario']
-            ]);
-
-            return $resultado ? $this->pdo->lastInsertId() : false;
-
-        } catch (PDOException $e) {
-            error_log('Error al crear usuario: ' . $e->getMessage());
+            $stmt = $this->conexion->prepare($query);
+            
+            // Bind de parámetros
+            $stmt->bindParam(':idRol', $this->idRol);
+            $stmt->bindParam(':nombreUsuario', $this->NombreUsuario);
+            $stmt->bindParam(':contrasena', $this->ContrasenaUsuario);
+            $stmt->bindParam(':correo', $this->CorreoUsuario);
+            
+            if ($stmt->execute()) {
+                $this->idUsuario = $this->conexion->lastInsertId();
+                return true;
+            }
             return false;
-        } catch (Exception $e) {
-            error_log($e->getMessage());
+            
+        } catch (PDOException $e) {
+            error_log("Error al crear usuario: " . $e->getMessage());
             return false;
         }
     }
-
+    
     /**
-     * Actualizar datos de un usuario
-     * 
-     * @param int $id ID del usuario
-     * @param array $datos Datos a actualizar
-     * @return bool True si se actualizó, false si falla
+     * Leer todos los usuarios con información de su rol
+     * @return array|false Array de usuarios o false si hay error
      */
-    public function actualizar($id, $datos) {
+    public function leerTodos() {
         try {
-            // Construir query dinámicamente según campos a actualizar
-            $campos = [];
-            $valores = ['id' => $id];
-
-            if (isset($datos['NombreUsuario'])) {
-                $campos[] = "NombreUsuario = :nombreUsuario";
-                $valores['nombreUsuario'] = $datos['NombreUsuario'];
-            }
-
-            if (isset($datos['CorreoUsuario'])) {
-                $campos[] = "CorreoUsuario = :email";
-                $valores['email'] = $datos['CorreoUsuario'];
-            }
-
-            if (isset($datos['idRol'])) {
-                $campos[] = "idRol = :idRol";
-                $valores['idRol'] = $datos['idRol'];
-            }
-
-            // Si se proporciona nueva contraseña, hashearla
-            if (isset($datos['ContrasenaUsuario']) && !empty($datos['ContrasenaUsuario'])) {
-                $campos[] = "ContrasenaUsuario = :contrasena";
-                $valores['contrasena'] = password_hash($datos['ContrasenaUsuario'], PASSWORD_DEFAULT);
-            }
-
-            if (empty($campos)) {
-                return false; // No hay nada que actualizar
-            }
-
-            $query = "UPDATE Usuario SET " . implode(', ', $campos) . " WHERE idUsuario = :id";
+            $query = "SELECT u.idUsuario, u.NombreUsuario, u.CorreoUsuario, 
+                            u.idRol, r.NombreRol
+                    FROM Usuario u
+                    INNER JOIN Rol r ON u.idRol = r.idRol
+                    ORDER BY u.NombreUsuario ASC";
             
-            $stmt = $this->pdo->prepare($query);
-            return $stmt->execute($valores);
-
+            $stmt = $this->conexion->prepare($query);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
         } catch (PDOException $e) {
-            error_log('Error al actualizar usuario: ' . $e->getMessage());
+            error_log("Error al leer usuarios: " . $e->getMessage());
             return false;
         }
     }
-
+    
     /**
-     * Cambiar contraseña de un usuario
-     * 
-     * @param int $id ID del usuario
-     * @param string $nuevaContrasena Nueva contraseña en texto plano
-     * @return bool True si se actualizó, false si falla
+     * Leer un usuario específico por ID
+     * @return array|false Datos del usuario o false si no existe
      */
-    public function cambiarContrasena($id, $nuevaContrasena) {
+    public function leerPorId() {
         try {
+            $query = "SELECT u.idUsuario, u.NombreUsuario, u.CorreoUsuario, 
+                            u.idRol, r.NombreRol, r.DescripcionRol
+                    FROM Usuario u
+                    INNER JOIN Rol r ON u.idRol = r.idRol
+                    WHERE u.idUsuario = :idUsuario";
+            
+            $stmt = $this->conexion->prepare($query);
+            $stmt->bindParam(':idUsuario', $this->idUsuario);
+            $stmt->execute();
+            
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($row) {
+                $this->NombreUsuario = $row['NombreUsuario'];
+                $this->CorreoUsuario = $row['CorreoUsuario'];
+                $this->idRol = $row['idRol'];
+                return $row;
+            }
+            
+            return false;
+            
+        } catch (PDOException $e) {
+            error_log("Error al leer usuario por ID: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Actualizar datos del usuario
+     * @return bool True si se actualizó exitosamente, false en caso contrario
+     */
+    public function actualizar() {
+        try {
+            $query = "UPDATE Usuario 
+                    SET idRol = :idRol, 
+                        NombreUsuario = :nombreUsuario, 
+                        CorreoUsuario = :correo
+                    WHERE idUsuario = :idUsuario";
+            
+            $stmt = $this->conexion->prepare($query);
+            
+            // Bind de parámetros
+            $stmt->bindParam(':idRol', $this->idRol);
+            $stmt->bindParam(':nombreUsuario', $this->NombreUsuario);
+            $stmt->bindParam(':correo', $this->CorreoUsuario);
+            $stmt->bindParam(':idUsuario', $this->idUsuario);
+            
+            return $stmt->execute();
+            
+        } catch (PDOException $e) {
+            error_log("Error al actualizar usuario: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Actualizar contraseña del usuario
+     * @param string $nuevaContrasena Nueva contraseña sin encriptar
+     * @return bool True si se actualizó exitosamente, false en caso contrario
+     */
+    public function actualizarContrasena($nuevaContrasena) {
+        try {
+            $query = "UPDATE Usuario 
+                    SET ContrasenaUsuario = :contrasena
+                    WHERE idUsuario = :idUsuario";
+            
+            $stmt = $this->conexion->prepare($query);
+            
             $contrasenaHash = password_hash($nuevaContrasena, PASSWORD_DEFAULT);
-
-            $query = "UPDATE Usuario SET ContrasenaUsuario = :contrasena WHERE idUsuario = :id";
-            $stmt = $this->pdo->prepare($query);
-            return $stmt->execute([
-                'contrasena' => $contrasenaHash,
-                'id' => $id
-            ]);
-
+            
+            $stmt->bindParam(':contrasena', $contrasenaHash);
+            $stmt->bindParam(':idUsuario', $this->idUsuario);
+            
+            return $stmt->execute();
+            
         } catch (PDOException $e) {
-            error_log('Error al cambiar contraseña: ' . $e->getMessage());
+            error_log("Error al actualizar contraseña: " . $e->getMessage());
             return false;
         }
     }
-
+    
     /**
-     * Eliminar un usuario
-     * 
-     * @param int $id ID del usuario
-     * @return bool True si se eliminó, false si falla
+     * Eliminar usuario
+     * @return bool True si se eliminó exitosamente, false en caso contrario
      */
-    public function eliminar($id) {
+    public function eliminar() {
         try {
-            $query = "DELETE FROM Usuario WHERE idUsuario = :id";
-            $stmt = $this->pdo->prepare($query);
-            return $stmt->execute(['id' => $id]);
-
+            $query = "DELETE FROM Usuario WHERE idUsuario = :idUsuario";
+            
+            $stmt = $this->conexion->prepare($query);
+            $stmt->bindParam(':idUsuario', $this->idUsuario);
+            
+            return $stmt->execute();
+            
         } catch (PDOException $e) {
-            error_log('Error al eliminar usuario: ' . $e->getMessage());
+            error_log("Error al eliminar usuario: " . $e->getMessage());
             return false;
         }
     }
-
+    
+    // ==================== MÉTODOS DE AUTENTICACIÓN ====================
+    
     /**
-     * Contar total de usuarios
-     * 
-     * @return int Número total de usuarios
+     * Login de usuario
+     * @param string $correo Email del usuario
+     * @param string $contrasena Contraseña sin encriptar
+     * @return array|false Datos del usuario si login exitoso, false en caso contrario
      */
-    public function contarTotal() {
-        $query = "SELECT COUNT(*) as total FROM Usuario";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
-        $resultado = $stmt->fetch();
-        return (int) $resultado['total'];
-    }
-
-    /**
-     * Contar usuarios por rol
-     * 
-     * @return array Array asociativo con idRol => cantidad
-     */
-    public function contarPorRol() {
-        $query = "SELECT r.NombreRol, COUNT(u.idUsuario) as cantidad 
-                FROM Rol r 
-                LEFT JOIN Usuario u ON r.idRol = u.idRol 
-                GROUP BY r.idRol, r.NombreRol";
-        
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
-
-    /**
-     * Validar si un email ya está registrado
-     * 
-     * @param string $email Email a validar
-     * @param int|null $exceptoId ID del usuario a excluir de la búsqueda (para actualizaciones)
-     * @return bool True si el email existe, false si no
-     */
-    public function emailExiste($email, $exceptoId = null) {
-        if ($exceptoId) {
-            $query = "SELECT COUNT(*) as total FROM Usuario 
-                    WHERE CorreoUsuario = :email AND idUsuario != :id";
-            $stmt = $this->pdo->prepare($query);
-            $stmt->execute(['email' => $email, 'id' => $exceptoId]);
-        } else {
-            $query = "SELECT COUNT(*) as total FROM Usuario WHERE CorreoUsuario = :email";
-            $stmt = $this->pdo->prepare($query);
-            $stmt->execute(['email' => $email]);
+    public function login($correo, $contrasena) {
+        try {
+            $query = "SELECT u.idUsuario, u.NombreUsuario, u.CorreoUsuario, 
+                            u.ContrasenaUsuario, u.idRol, r.NombreRol
+                    FROM Usuario u
+                    INNER JOIN Rol r ON u.idRol = r.idRol
+                    WHERE u.CorreoUsuario = :correo";
+            
+            $stmt = $this->conexion->prepare($query);
+            $stmt->bindParam(':correo', $correo);
+            $stmt->execute();
+            
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($row && password_verify($contrasena, $row['ContrasenaUsuario'])) {
+                // Remover contraseña del array de retorno por seguridad
+                unset($row['ContrasenaUsuario']);
+                return $row;
+            }
+            
+            return false;
+            
+        } catch (PDOException $e) {
+            error_log("Error en login: " . $e->getMessage());
+            return false;
         }
-        
-        $resultado = $stmt->fetch();
-        return $resultado['total'] > 0;
     }
-
+    
     /**
-     * Validar si un nombre de usuario ya existe
-     * 
-     * @param string $nombreUsuario Nombre de usuario a validar
-     * @param int|null $exceptoId ID del usuario a excluir de la búsqueda
-     * @return bool True si el nombre existe, false si no
+     * Verificar si un correo ya existe en la base de datos
+     * @param string $correo Email a verificar
+     * @param int|null $idUsuarioExcluir ID de usuario a excluir de la búsqueda (para actualizaciones)
+     * @return bool True si el correo existe, false en caso contrario
      */
-    public function nombreUsuarioExiste($nombreUsuario, $exceptoId = null) {
-        if ($exceptoId) {
-            $query = "SELECT COUNT(*) as total FROM Usuario 
-                    WHERE NombreUsuario = :nombre AND idUsuario != :id";
-            $stmt = $this->pdo->prepare($query);
-            $stmt->execute(['nombre' => $nombreUsuario, 'id' => $exceptoId]);
-        } else {
-            $query = "SELECT COUNT(*) as total FROM Usuario WHERE NombreUsuario = :nombre";
-            $stmt = $this->pdo->prepare($query);
-            $stmt->execute(['nombre' => $nombreUsuario]);
+    public function correoExiste($correo, $idUsuarioExcluir = null) {
+        try {
+            $query = "SELECT idUsuario FROM Usuario WHERE CorreoUsuario = :correo";
+            
+            if ($idUsuarioExcluir !== null) {
+                $query .= " AND idUsuario != :idUsuarioExcluir";
+            }
+            
+            $stmt = $this->conexion->prepare($query);
+            $stmt->bindParam(':correo', $correo);
+            
+            if ($idUsuarioExcluir !== null) {
+                $stmt->bindParam(':idUsuarioExcluir', $idUsuarioExcluir);
+            }
+            
+            $stmt->execute();
+            
+            return $stmt->rowCount() > 0;
+            
+        } catch (PDOException $e) {
+            error_log("Error al verificar correo: " . $e->getMessage());
+            return false;
         }
-        
-        $resultado = $stmt->fetch();
-        return $resultado['total'] > 0;
+    }
+    
+    /**
+     * Obtener usuarios por rol
+     * @param int $idRol ID del rol a filtrar
+     * @return array|false Array de usuarios o false si hay error
+     */
+    public function leerPorRol($idRol) {
+        try {
+            $query = "SELECT u.idUsuario, u.NombreUsuario, u.CorreoUsuario, 
+                            u.idRol, r.NombreRol
+                    FROM Usuario u
+                    INNER JOIN Rol r ON u.idRol = r.idRol
+                    WHERE u.idRol = :idRol
+                    ORDER BY u.NombreUsuario ASC";
+            
+            $stmt = $this->conexion->prepare($query);
+            $stmt->bindParam(':idRol', $idRol);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (PDOException $e) {
+            error_log("Error al leer usuarios por rol: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Buscar usuarios por nombre
+     * @param string $termino Término de búsqueda
+     * @return array|false Array de usuarios o false si hay error
+     */
+    public function buscarPorNombre($termino) {
+        try {
+            $query = "SELECT u.idUsuario, u.NombreUsuario, u.CorreoUsuario, 
+                            u.idRol, r.NombreRol
+                    FROM Usuario u
+                    INNER JOIN Rol r ON u.idRol = r.idRol
+                    WHERE u.NombreUsuario LIKE :termino
+                    ORDER BY u.NombreUsuario ASC";
+            
+            $stmt = $this->conexion->prepare($query);
+            $terminoBusqueda = "%{$termino}%";
+            $stmt->bindParam(':termino', $terminoBusqueda);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (PDOException $e) {
+            error_log("Error al buscar usuarios: " . $e->getMessage());
+            return false;
+        }
     }
 }
 ?>

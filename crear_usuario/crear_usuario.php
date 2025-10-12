@@ -1,82 +1,71 @@
 <?php
 /**
- * Script completo para crear usuario con rol asignado
+ * Script para crear un usuario administrador utilizando el modelo de la aplicación.
+ * Esto asegura que la lógica de negocio (ej. hasheo de contraseña) sea consistente.
  */
+
+// Definir la raíz del proyecto para poder incluir los modelos y la configuración
+define('PROJECT_ROOT', dirname(__DIR__));
+
+require_once PROJECT_ROOT . '/models/Database.php';
+require_once PROJECT_ROOT . '/models/Usuario.php';
 
 // ============================================
 // CONFIGURACION - EDITA ESTOS VALORES
 // ============================================
-$host = '127.0.0.1';
-$dbname = 'hoteltorremolinos';
-$username = 'root';
-$password = '1234';
-
-$nuevoUsuario = 'user';
-$nuevoEmail = 'user@gmail.com';
-$nuevoPassword = '1234';
-$idRolAsignar = 4;  // ID del rol
+$nuevoUsuario = 'admin'; // Nombre de usuario
+$nuevoEmail = 'admin@torremolinos.com'; // Correo para el login
+$nuevoPassword = 'admin123'; // Contraseña en texto plano
+$idRolAsignar = 4;  // 4 = Administrador (según script.sql)
 // ============================================
 
 try {
-    $pdo = new PDO("mysql:host=$host;port=3306;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    echo "Conectado a la base de datos\n\n";
-    
-    $pdo->beginTransaction();
-    
-    $stmt = $pdo->prepare("SELECT idUsuario FROM Usuario WHERE NombreUsuario = ? OR CorreoUsuario = ?");
-    $stmt->execute([$nuevoUsuario, $nuevoEmail]);
-    
-    if ($stmt->fetch()) {
-        $pdo->rollBack();
-        echo "ERROR: Ya existe un usuario con ese nombre o email\n";
+    // Obtener conexión a la BD usando la clase de la aplicación
+    $database = Database::getInstance();
+    $conexion = $database->getConnection();
+    echo "Conectado a la base de datos.\n\n";
+
+    // Instanciar el modelo de Usuario
+    $usuarioModel = new Usuario($conexion);
+
+    // Verificar si el correo ya existe usando el método del modelo
+    if ($usuarioModel->correoExiste($nuevoEmail)) {
+        echo "ERROR: El correo electrónico '{$nuevoEmail}' ya está registrado.\n";
         exit(1);
     }
-    
-    $hash = password_hash($nuevoPassword, PASSWORD_DEFAULT);
-    
-    $sql = "INSERT INTO Usuario (NombreUsuario, CorreoUsuario, ContrasenaUsuario, idRol) 
-            VALUES (?, ?, ?, ?)";
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$nuevoUsuario, $nuevoEmail, $hash, $idRolAsignar]);
-    $idUsuario = $pdo->lastInsertId();
-    
-    echo "Usuario creado (ID: $idUsuario)\n";
-    
-    $stmt = $pdo->prepare("SELECT NombreRol FROM Rol WHERE idRol = ?");
-    $stmt->execute([$idRolAsignar]);
-    $nombreRol = $stmt->fetchColumn();
-    
-    if (!$nombreRol) {
-        $pdo->rollBack();
-        echo "ERROR: No existe el rol con ID '$idRolAsignar'\n";
-        echo "\nRoles disponibles:\n";
-        $stmt = $pdo->query("SELECT idRol, NombreRol FROM Rol");
-        while ($row = $stmt->fetch()) {
-            echo "- {$row['NombreRol']} (ID: {$row['idRol']})\n";
-        }
+
+    // Asignar los datos al modelo. El método setContrasenaUsuario se encargará del hasheo.
+    $usuarioModel->setNombreUsuario($nuevoUsuario);
+    $usuarioModel->setCorreoUsuario($nuevoEmail);
+    $usuarioModel->setContrasenaUsuario($nuevoPassword); // Se pasa la contraseña en texto plano
+    $usuarioModel->setIdRol($idRolAsignar);
+
+    // Intentar crear el usuario
+    if ($usuarioModel->crear()) {
+        $idUsuario = $usuarioModel->getIdUsuario();
+        echo "Usuario creado con éxito (ID: {$idUsuario}).\n";
+
+        // Obtener el nombre del rol para mostrarlo
+        $stmt = $conexion->prepare("SELECT NombreRol FROM Rol WHERE idRol = ?");
+        $stmt->execute([$idRolAsignar]);
+        $nombreRol = $stmt->fetchColumn();
+
+        echo "==========================================\n";
+        echo "Usuario: {$nuevoUsuario}\n";
+        echo "Email: {$nuevoEmail}\n";
+        echo "Contraseña: {$nuevoPassword}\n";
+        echo "Rol: {$nombreRol}\n";
+        echo "==========================================\n";
+    } else {
+        echo "ERROR: No se pudo crear el usuario.\n";
         exit(1);
     }
-    
-    echo "Rol asignado: $nombreRol (ID: $idRolAsignar)\n\n";
-    
-    $pdo->commit();
-    
-    echo "¡Usuario creado exitosamente!\n";
-    echo "==========================================\n";
-    echo "Usuario: $nuevoUsuario\n";
-    echo "Email: $nuevoEmail\n";
-    echo "Contraseña: $nuevoPassword\n";
-    echo "Rol: $nombreRol\n";
-    echo "==========================================\n";
-    
+
 } catch (PDOException $e) {
-    if ($pdo && $pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-    echo "ERROR: " . $e->getMessage() . "\n";
+    echo "ERROR DE CONEXIÓN A LA BASE DE DATOS: " . $e->getMessage() . "\n";
+    exit(1);
+} catch (Exception $e) {
+    echo "ERROR GENERAL: " . $e->getMessage() . "\n";
     exit(1);
 }
 ?>

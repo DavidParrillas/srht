@@ -1,7 +1,7 @@
 <!-- dashboard/content.php -->
 <div class="dashboard-header">
     <h1><?php echo htmlspecialchars($page_title ?? 'Dashboard'); ?></h1>
-    <p>Bienvenido de nuevo, <?php echo htmlspecialchars($_SESSION['username'] ?? 'Usuario'); ?>.</p>
+    <p>Bienvenido de nuevo, <?php echo htmlspecialchars($_SESSION['usuario_nombre'] ?? 'Usuario'); ?>.</p>
 </div>
 
 <!-- Info Cards con Bootstrap -->
