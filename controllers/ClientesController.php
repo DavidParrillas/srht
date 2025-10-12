@@ -1,25 +1,42 @@
 <?php
+/**
+ * Controlador de Clientes
+ * Sistema de Reservas Hotel Torremolinos (SRHT)
+ * 
+ * Gestiona el CRUD de clientes del hotel
+ */
+
+require_once 'controllers/AuthController.php';
+
 class ClientesController {
+    
+    private $db;
+    
     /**
-     * Constructor. Verifica si el usuario ha iniciado sesión.
-     * Si no, lo redirige a la página de login.
+     * Constructor
      */
-    public function __construct() {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: index.php?controller=auth&action=login');
-            exit;
+    public function __construct($conexion) {
+        $this->db = $conexion;
+        
+        // Iniciar sesión si no está iniciada
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
     }
     
     /**
-     * Muestra la página principal de gestión de clientes.
-     * Carga la lista de todos los clientes para mostrarlos en una tabla.
+     * Listar todos los clientes
+     * Accesible para roles con permisos de gestión.
      */
     public function index() {
+        // Requerir autenticación y rol específico
+        AuthController::requerirRol(['Administrador', 'Gerencia', 'Recepción']);
+        
         $page_title = "Gestión de Clientes";
         $active_page = "clientes";
-        $child_view = "views/clientes/index.php";
-
-        include("views/layouts/main.php");
+        $child_view = 'views/clientes/index.php';
+        
+        require_once 'views/layouts/main.php';
     }
 }
+?>

@@ -1,24 +1,42 @@
 <?php
+/**
+ * Controlador de Reservaciones
+ * Sistema de Reservas Hotel Torremolinos (SRHT)
+ * 
+ * Gestiona el CRUD de reservaciones del hotel
+ */
+
+require_once 'controllers/AuthController.php';
+
 class ReservacionesController {
+    
+    private $db;
+    
     /**
-     * Constructor. Verifica si el usuario ha iniciado sesión.
-     * Si no, lo redirige a la página de login.
+     * Constructor
      */
-    public function __construct() {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: index.php?controller=auth&action=login');
-            exit;
+    public function __construct($conexion) {
+        $this->db = $conexion;
+        
+        // Iniciar sesión si no está iniciada
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
     }
-
+    
     /**
-     * Muestra la página principal de gestión de reservaciones.
+     * Listar todas las reservaciones
+     * Accesible para roles con permisos de gestión.
      */
     public function index() {
+        // Requerir autenticación y rol específico
+        AuthController::requerirRol(['Administrador', 'Gerencia', 'Recepción']);
+        
         $page_title = "Gestión de Reservaciones";
         $active_page = "reservaciones";
-        $child_view = __DIR__ . '/../views/reservaciones/index.php';
-        require_once __DIR__ . '/../views/layouts/main.php';
+        $child_view = 'views/reservaciones/index.php';
+        
+        require_once 'views/layouts/main.php';
     }
-
 }
+?>
