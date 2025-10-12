@@ -11,10 +11,10 @@ $dbname = 'hoteltorremolinos';
 $username = 'root';
 $password = '1234';
 
-$nuevoUsuario = 'admin';
-$nuevoEmail = 'admin@gmail.com';
+$nuevoUsuario = 'user';
+$nuevoEmail = 'user@gmail.com';
 $nuevoPassword = '1234';
-$idRolAsignar = 1;  // ID del rol
+$idRolAsignar = 4;  // ID del rol
 // ============================================
 
 try {
