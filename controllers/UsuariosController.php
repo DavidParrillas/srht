@@ -167,9 +167,12 @@ class UsuariosController {
             // Obtener roles para el select
             $roles = $this->obtenerRoles();
             
-            // Cargar vista
-            require_once 'views/usuarios/editar.php';
+            $page_title = "Editar Usuario";
+            $active_page = "usuarios";
+            $child_view = 'views/usuarios/editar.php';
             
+            // Cargar vista
+            require_once 'views/layouts/main.php';
         } catch (Exception $e) {
             $_SESSION['error_message'] = $e->getMessage();
             header('Location: index.php?controller=usuarios&action=index');
@@ -195,12 +198,12 @@ class UsuariosController {
             }
             
             // Validar campos requeridos
-            if (empty($_POST['id']) || empty($_POST['nombre']) || 
+            if (empty($_POST['idUsuario']) || empty($_POST['nombre']) || 
                 empty($_POST['correo']) || empty($_POST['id_rol'])) {
                 throw new Exception('Por favor complete todos los campos obligatorios');
             }
             
-            $idUsuario = intval($_POST['id']);
+            $idUsuario = intval($_POST['idUsuario']);
             $nombre = trim($_POST['nombre']);
             $correo = trim($_POST['correo']);
             $idRol = intval($_POST['id_rol']);
@@ -247,7 +250,7 @@ class UsuariosController {
             $_SESSION['error_message'] = $e->getMessage();
             
             // Redirigir de vuelta al formulario de edición
-            $idUsuario = isset($_POST['id']) ? intval($_POST['id']) : 0;
+            $idUsuario = isset($_POST['idUsuario']) ? intval($_POST['idUsuario']) : 0;
             header('Location: index.php?controller=usuarios&action=editar&id=' . $idUsuario);
             exit();
         }

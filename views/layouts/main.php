@@ -31,8 +31,6 @@
                     ?>
                 </div>
             </main>
-
-            <?php require_once __DIR__ . '/footer.php'; ?>
         </div> <!-- .main-content -->
     </div> <!-- .main-wrapper -->
 
