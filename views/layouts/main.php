@@ -20,7 +20,6 @@
         <?php require_once __DIR__ . '/sidebar.php'; ?>
 
         <div class="main-content">
-            <?php require_once __DIR__ . '/header.php'; ?>
 
             <main class="content-fluid">
                 <div class="container-fluid">
