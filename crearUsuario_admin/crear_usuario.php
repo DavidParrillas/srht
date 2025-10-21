@@ -14,8 +14,8 @@ require_once PROJECT_ROOT . '/models/Usuario.php';
 // CONFIGURACION - EDITA ESTOS VALORES
 // ============================================
 $nuevoUsuario = 'admin'; // Nombre de usuario
-$nuevoEmail = 'admin@torremolinos.com'; // Correo para el login
-$nuevoPassword = 'admin123'; // Contraseña en texto plano
+$nuevoEmail = 'admin@gmail.com'; // Correo para el login
+$nuevoPassword = 'admin@gmail.com'; // Contraseña en texto plano
 $idRolAsignar = 4;  // 4 = Administrador (según script.sql)
 // ============================================
 
