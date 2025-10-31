@@ -8,6 +8,41 @@
         </div>
     </div>
 
+    <?php
+    // Obtener valores de filtros
+    $filterNombre = htmlspecialchars($_GET['nombre'] ?? '');
+    $filterDui = htmlspecialchars($_GET['dui'] ?? '');
+    $filterCorreo = htmlspecialchars($_GET['correo'] ?? '');
+    ?>
+
+    <form method="get" action="index.php" class="row g-3 mb-4">
+        <input type="hidden" name="controller" value="clientes">
+        <input type="hidden" name="action" value="index">
+        
+        <div class="col-md-3">
+            <label for="filter-nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="filter-nombre" name="nombre" 
+                   value="<?php echo $filterNombre; ?>" placeholder="Buscar por nombre">
+        </div>
+        
+        <div class="col-md-3">
+            <label for="filter-dui" class="form-label">DUI</label>
+            <input type="text" class="form-control" id="filter-dui" name="dui" 
+                   value="<?php echo $filterDui; ?>" placeholder="Buscar por DUI">
+        </div>
+        
+        <div class="col-md-3">
+            <label for="filter-correo" class="form-label">Correo</label>
+            <input type="text" class="form-control" id="filter-correo" name="correo" 
+                   value="<?php echo $filterCorreo; ?>" placeholder="Buscar por correo">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-secondary me-2">Filtrar</button>
+            <a href="index.php?controller=clientes&action=index" class="btn btn-light">Limpiar</a>
+        </div>
+    </form>
+
     <div class="table-responsive">
         <table class="table data-table">
             <thead>

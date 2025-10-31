@@ -5,6 +5,44 @@
     </a>
 </div>
 
+<?php
+// Filtros: nombre de usuario y rol (envían por GET)
+$filterNombre = htmlspecialchars($_GET['nombre'] ?? '', ENT_QUOTES, 'UTF-8');
+$filterRol = $_GET['rol'] ?? '';
+?>
+
+<form method="get" action="index.php" class="row g-2 mb-3 align-items-end">
+    <input type="hidden" name="controller" value="usuarios">
+    <input type="hidden" name="action" value="index">
+
+    <div class="col-auto">
+        <label for="filter-nombre" class="form-label">Nombre</label>
+        <input id="filter-nombre" type="text" name="nombre" value="<?php echo $filterNombre; ?>" class="form-control" placeholder="Buscar por usuario">
+    </div>
+
+    <div class="col-auto">
+        <label for="filter-rol" class="form-label">Rol</label>
+        <select id="filter-rol" name="rol" class="form-select">
+            <option value="">-- Todos --</option>
+            <?php if (!empty($roles) && is_array($roles)): ?>
+                <?php foreach ($roles as $rol): ?>
+                    <?php
+                    // Asumimos que cada rol tiene 'idRol' y 'NombreRol'. Si no, se mostrará como texto plano.
+                    $rolId = isset($rol['idRol']) ? $rol['idRol'] : ($rol['id'] ?? '');
+                    $rolNombre = isset($rol['NombreRol']) ? $rol['NombreRol'] : ($rol['nombre'] ?? $rol);
+                    ?>
+                    <option value="<?php echo htmlspecialchars($rolId, ENT_QUOTES, 'UTF-8'); ?>" <?php echo ($filterRol !== '' && (string)$filterRol === (string)$rolId) ? 'selected' : ''; ?>><?php echo htmlspecialchars($rolNombre); ?></option>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <button type="submit" class="btn btn-secondary">Filtrar</button>
+        <a href="index.php?controller=usuarios&action=index" class="btn btn-light ms-2">Limpiar</a>
+    </div>
+</form>
+
 <div class="table-responsive">
     <table class="table data-table">
         <thead>

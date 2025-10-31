@@ -8,7 +8,7 @@
  */
 
 class Clientes {
-    
+
     private $conn;
     private $table = 'Cliente';
     
@@ -18,13 +18,59 @@ class Clientes {
     public $CorreoCliente;
     public $NombreCliente;
     public $TelefonoCliente;
-    
+
     /**
      * Constructor
      * @param PDO $db Conexión a la base de datos
      */
     public function __construct($db) {
         $this->conn = $db;
+    }
+
+    /**
+     * Obtener todos los clientes con filtros opcionales
+     * @param array $filtros Array asociativo con los filtros a aplicar
+     * @return PDOStatement Resultado de la consulta
+     */
+    public function obtenerTodos($filtros = []) {
+        try {
+            $query = "SELECT * FROM " . $this->table . " WHERE 1=1";
+            $params = [];
+            
+            // Filtro por nombre
+            if (!empty($filtros['nombre'])) {
+                $query .= " AND NombreCliente LIKE :nombre";
+                $params[':nombre'] = "%" . $filtros['nombre'] . "%";
+            }
+            
+            // Filtro por DUI
+            if (!empty($filtros['dui'])) {
+                $query .= " AND DuiCliente LIKE :dui";
+                $params[':dui'] = "%" . $filtros['dui'] . "%";
+            }
+            
+            // Filtro por correo
+            if (!empty($filtros['correo'])) {
+                $query .= " AND CorreoCliente LIKE :correo";
+                $params[':correo'] = "%" . $filtros['correo'] . "%";
+            }
+            
+            $query .= " ORDER BY NombreCliente ASC";
+            
+            $stmt = $this->conn->prepare($query);
+            
+            // Bind de parámetros
+            foreach ($params as $param => $value) {
+                $stmt->bindValue($param, $value);
+            }
+            
+            $stmt->execute();
+            return $stmt;
+
+        } catch (PDOException $e) {
+            error_log("Error al obtener clientes: " . $e->getMessage());
+            throw new Exception("Error al obtener la lista de clientes");
+        }
     }
     
     /**
@@ -33,7 +79,7 @@ class Clientes {
      */
     public function crear() {
         try {
-            // Preparar la consulta SQL
+            // Preparar la consulta SQL 
             $query = "INSERT INTO " . $this->table . " 
                     (DuiCliente, CorreoCliente, NombreCliente, TelefonoCliente) 
                     VALUES (:DuiCliente, :CorreoCliente, :NombreCliente, :TelefonoCliente)";
@@ -60,7 +106,7 @@ class Clientes {
             }
             
             return false;
-            
+
         } catch (PDOException $e) {
             error_log("Error al crear cliente: " . $e->getMessage());
             return false;
@@ -73,7 +119,7 @@ class Clientes {
      */
     public function editar() {
         try {
-            // Preparar la consulta SQL
+            // Preparar la consulta SQL 
             $query = "UPDATE " . $this->table . " 
                     SET DuiCliente = :DuiCliente,
                         CorreoCliente = :CorreoCliente,
@@ -104,7 +150,7 @@ class Clientes {
             }
             
             return false;
-            
+
         } catch (PDOException $e) {
             error_log("Error al editar cliente: " . $e->getMessage());
             return false;
@@ -119,7 +165,7 @@ class Clientes {
      */
     public function eliminar() {
         try {
-            // Preparar la consulta SQL
+            // Preparar la consulta SQL 
             $query = "DELETE FROM " . $this->table . " 
                     WHERE idCliente = :idCliente";
             
@@ -138,7 +184,7 @@ class Clientes {
             }
             
             return false;
-            
+
         } catch (PDOException $e) {
             // Si es error de constraint (tiene reservas), lanzar excepción
             if ($e->getCode() == '23000') {
@@ -150,33 +196,12 @@ class Clientes {
     }
     
     /**
-     * Obtener todos los clientes
-     * @return PDOStatement Resultado de la consulta
-     */
-    public function obtenerTodos() {
-        try {
-            $query = "SELECT idCliente, DuiCliente, CorreoCliente, NombreCliente, TelefonoCliente 
-                    FROM " . $this->table . " 
-                    ORDER BY NombreCliente ASC";
-            
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute();
-            
-            return $stmt;
-            
-        } catch (PDOException $e) {
-            error_log("Error al obtener clientes: " . $e->getMessage());
-            return false;
-        }
-    }
-    
-    /**
      * Obtener un cliente por su ID
      * @return bool True si se encontró, False en caso contrario
      */
-    public function obtenerPorId() {
+    public function obtener() {
         try {
-            $query = "SELECT idCliente, DuiCliente, CorreoCliente, NombreCliente, TelefonoCliente 
+            $query = "SELECT idCliente, DuiCliente, CorreoCliente, NombreCliente, TelefonoCliente
                     FROM " . $this->table . " 
                     WHERE idCliente = :idCliente 
                     LIMIT 1";
@@ -195,7 +220,7 @@ class Clientes {
                 
                 return true;
             }
-            
+
             return false;
             
         } catch (PDOException $e) {
@@ -212,7 +237,7 @@ class Clientes {
      */
     public function duiExiste($dui, $excluirId = null) {
         try {
-            if ($excluirId === null) {
+            if ($excluirId === null) { 
                 $query = "SELECT idCliente 
                         FROM " . $this->table . " 
                         WHERE DuiCliente = :dui 
@@ -234,7 +259,7 @@ class Clientes {
             
             $stmt->execute();
             return $stmt->rowCount() > 0;
-            
+
         } catch (PDOException $e) {
             error_log("Error al verificar existencia de DUI: " . $e->getMessage());
             return false;
@@ -249,7 +274,7 @@ class Clientes {
      */
     public function correoExiste($correo, $excluirId = null) {
         try {
-            if ($excluirId === null) {
+            if ($excluirId === null) { 
                 $query = "SELECT idCliente 
                         FROM " . $this->table . " 
                         WHERE CorreoCliente = :correo 
@@ -271,7 +296,7 @@ class Clientes {
             
             $stmt->execute();
             return $stmt->rowCount() > 0;
-            
+
         } catch (PDOException $e) {
             error_log("Error al verificar existencia de correo: " . $e->getMessage());
             return false;
@@ -285,7 +310,7 @@ class Clientes {
      */
     public function buscarPorNombre($termino) {
         try {
-            $query = "SELECT idCliente, DuiCliente, CorreoCliente, NombreCliente, TelefonoCliente 
+            $query = "SELECT idCliente, DuiCliente, CorreoCliente, NombreCliente, TelefonoCliente
                     FROM " . $this->table . " 
                     WHERE NombreCliente LIKE :termino 
                     ORDER BY NombreCliente ASC";
@@ -296,7 +321,7 @@ class Clientes {
             $stmt->execute();
             
             return $stmt;
-            
+
         } catch (PDOException $e) {
             error_log("Error al buscar clientes por nombre: " . $e->getMessage());
             return false;
@@ -310,7 +335,7 @@ class Clientes {
      */
     public function buscarPorDui($dui) {
         try {
-            $query = "SELECT idCliente, DuiCliente, CorreoCliente, NombreCliente, TelefonoCliente 
+            $query = "SELECT idCliente, DuiCliente, CorreoCliente, NombreCliente, TelefonoCliente
                     FROM " . $this->table . " 
                     WHERE DuiCliente LIKE :dui 
                     ORDER BY NombreCliente ASC";
@@ -321,7 +346,7 @@ class Clientes {
             $stmt->execute();
             
             return $stmt;
-            
+
         } catch (PDOException $e) {
             error_log("Error al buscar cliente por DUI: " . $e->getMessage());
             return false;
@@ -335,7 +360,7 @@ class Clientes {
      */
     public function buscarPorCorreo($correo) {
         try {
-            $query = "SELECT idCliente, DuiCliente, CorreoCliente, NombreCliente, TelefonoCliente 
+            $query = "SELECT idCliente, DuiCliente, CorreoCliente, NombreCliente, TelefonoCliente
                     FROM " . $this->table . " 
                     WHERE CorreoCliente LIKE :correo 
                     ORDER BY NombreCliente ASC";
@@ -346,7 +371,7 @@ class Clientes {
             $stmt->execute();
             
             return $stmt;
-            
+
         } catch (PDOException $e) {
             error_log("Error al buscar cliente por correo: " . $e->getMessage());
             return false;
@@ -363,7 +388,7 @@ class Clientes {
             $query = "SELECT r.*, 
                             h.NumeroHabitacion, 
                             th.NombreTipoHabitacion,
-                            p.NombrePaquete,
+                            p.NombrePaquete, 
                             p.TarifaPaquete
                     FROM Reserva r
                     INNER JOIN Habitacion h ON r.idHabitacion = h.idHabitacion
@@ -377,7 +402,7 @@ class Clientes {
             $stmt->execute();
             
             return $stmt;
-            
+
         } catch (PDOException $e) {
             error_log("Error al obtener reservas del cliente: " . $e->getMessage());
             return false;
@@ -406,7 +431,7 @@ class Clientes {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             
             return intval($row['total']);
-            
+
         } catch (PDOException $e) {
             error_log("Error al contar clientes: " . $e->getMessage());
             return 0;
