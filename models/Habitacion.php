@@ -1,7 +1,6 @@
 <?php
 class Habitacion
 {
-
     private $table = "Habitacion";
 
     private $idHabitacion;
@@ -78,6 +77,6 @@ class Habitacion
     {
         return $this->amenidadesIds;
     }
-
+    
 }
 ?>

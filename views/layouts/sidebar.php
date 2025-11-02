@@ -13,7 +13,7 @@ function render_nav_item($iconClass, $text, $controller, $active_page) {
     <nav class="sidebar-nav">
         <ul>
             <?php render_nav_item('fa-tachometer-alt', 'Dashboard', 'home', $active_page); ?>
-            <?php render_nav_item('fa-calendar-check', 'Reservaciones', 'reservaciones', $active_page); ?>
+            <?php render_nav_item('fa-calendar-check', 'Reservas', 'reservaciones', $active_page); ?>
             <?php render_nav_item('fa-users', 'Clientes', 'clientes', $active_page); ?>
             <?php render_nav_item('fa-bed', 'Habitaciones', 'habitaciones', $active_page); ?>
             <?php render_nav_item('fa-gem', 'Amenidades', 'amenidades', $active_page); ?>
