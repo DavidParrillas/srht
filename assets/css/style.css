@@ -2405,3 +2405,77 @@ textarea.form-control {
     background: rgba(255, 255, 255, 0.5);
 }
 
+.table.tabla-habitaciones {
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table.tabla-habitaciones th,
+.table.tabla-habitaciones td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table.tabla-habitaciones th:nth-child(1),
+.table.tabla-habitaciones td:nth-child(1) {
+    width: 10%;
+}
+.table.tabla-habitaciones th:nth-child(2),
+.table.tabla-habitaciones td:nth-child(2) {
+    width: 25%;
+}
+.table.tabla-habitaciones th:nth-child(3),
+.table.tabla-habitaciones td:nth-child(3) {
+    width: 20%;
+}
+.table.tabla-habitaciones th:nth-child(4),
+.table.tabla-habitaciones td:nth-child(4) {
+    width: 20%;
+}
+.table.tabla-habitaciones th:nth-child(5),
+.table.tabla-habitaciones td:nth-child(5) {
+    width: 25%;
+}
+
+.table.tabla-habitaciones thead th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+}
+
+.table.tabla-habitaciones tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.table.tabla-habitaciones td {
+    border-color: #dee2e6;
+    padding: 0.75rem 1rem;
+}
+
+.table.tabla-habitaciones .badge {
+    font-size: 0.8rem;
+    padding: 0.45em 0.7em;
+    border-radius: 0.5rem;
+}
+
+.table.tabla-habitaciones .action-buttons .btn {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    transition: 0.2s ease;
+}
+
+.table.tabla-habitaciones .action-buttons .btn:hover {
+    transform: scale(1.05);
+}
+
+

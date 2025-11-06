@@ -36,8 +36,15 @@ class ClientesController {
         AuthController::requerirAutenticacion();
         
         try {
-            // Obtener todos los clientes
-            $stmt = $this->clienteModel->obtenerTodos();
+            // Preparar filtros desde GET
+            $filtros = [
+                'nombre' => isset($_GET['nombre']) ? trim($_GET['nombre']) : '',
+                'dui' => isset($_GET['dui']) ? trim($_GET['dui']) : '',
+                'correo' => isset($_GET['correo']) ? trim($_GET['correo']) : ''
+            ];
+            
+            // Obtener clientes con filtros
+            $stmt = $this->clienteModel->obtenerTodos($filtros);
             $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             $page_title = "Gestión de Clientes";

@@ -5,3 +5,4 @@
 # Ignorar archivo de log de PHP
 php_error.log
 /logs/
+.vscode/

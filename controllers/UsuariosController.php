@@ -36,8 +36,17 @@ class UsuariosController {
         AuthController::requerirRol(['Administrador', 'Gerencia']);
         
         try {
-            // Obtener todos los usuarios
-            $usuarios = $this->usuarioModel->leerTodos();
+            // Preparar filtros desde GET
+            $filtros = [
+                'nombre' => isset($_GET['nombre']) ? trim($_GET['nombre']) : '',
+                'rol' => isset($_GET['rol']) ? $_GET['rol'] : ''
+            ];
+            
+            // Obtener todos los usuarios con filtros
+            $usuarios = $this->usuarioModel->leerTodos($filtros);
+            
+            // Obtener roles para el filtro
+            $roles = $this->obtenerRoles();
             
             $page_title = "Gestión de Usuarios";
             $active_page = "usuarios";

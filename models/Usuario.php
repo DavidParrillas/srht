@@ -103,19 +103,41 @@ class Usuario {
     
     /**
      * Leer todos los usuarios con información de su rol
+     * @param array $filtros Array asociativo con los filtros a aplicar (nombre, rol)
      * @return array|false Array de usuarios o false si hay error
      */
-    public function leerTodos() {
+    public function leerTodos($filtros = []) {
         try {
             $query = "SELECT u.idUsuario, u.NombreUsuario, u.CorreoUsuario, 
                             u.idRol, r.NombreRol
                     FROM Usuario u
                     INNER JOIN Rol r ON u.idRol = r.idRol
-                    ORDER BY u.NombreUsuario ASC";
+                    WHERE 1=1";
+
+            $params = [];
+            
+            // Aplicar filtro por nombre si existe
+            if (!empty($filtros['nombre'])) {
+                $query .= " AND u.NombreUsuario LIKE :nombre";
+                $params[':nombre'] = "%" . $filtros['nombre'] . "%";
+            }
+            
+            // Aplicar filtro por rol si existe
+            if (!empty($filtros['rol'])) {
+                $query .= " AND u.idRol = :rol";
+                $params[':rol'] = $filtros['rol'];
+            }
+            
+            $query .= " ORDER BY u.NombreUsuario ASC";
             
             $stmt = $this->conexion->prepare($query);
-            $stmt->execute();
             
+            // Bind de parámetros
+            foreach ($params as $param => $value) {
+                $stmt->bindValue($param, $value);
+            }
+            
+            $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
             
         } catch (PDOException $e) {
