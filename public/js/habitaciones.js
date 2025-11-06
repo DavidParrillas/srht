@@ -74,6 +74,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (alertas.length > 0) {
         alertas.forEach(alerta => {
+            
+            // Verificamos si la alerta está dentro de #seccion-pago
+            if (alerta.closest('#seccion-pago')) {
+                // Si está, es la alerta de reembolso. No hacemos nada.
+                return; 
+            }
+
+            // Si no está, es una alerta normal 
+            // Aplicamos el temporizador para cerrarla.
             setTimeout(() => {
                 if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
                     const bsAlert = bootstrap.Alert.getOrCreateInstance(alerta);

@@ -141,4 +141,53 @@ class Paquetes
             return false;
         }
     }
+
+    /**
+     * Obtener lista de paquetes disponibles
+     * (Versión corregida para que coincida con la BD)
+     *
+     * @return PDOStatement | false
+     */
+    public function obtenerPaquetes() {
+        try {
+            // CORRECCIÓN: Nombres de columna actualizados
+            $query = "SELECT idPaquete, 
+                             NombrePaquete, 
+                             DescripcionPaquete, 
+                             TarifaPaquete 
+                      FROM Paquete
+                      ORDER BY NombrePaquete ASC"; // Corregido
+            
+            $stmt = $this->conexion->prepare($query); 
+            
+            $stmt->execute();
+            return $stmt;
+
+        } catch (PDOException $e) {
+            error_log("Error al obtener paquetes: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Obtener los DATOS de un paquete por su ID como un array.
+     * (Diferente de obtenerPorId() que solo carga las propiedades)
+     * @param int $idPaquete
+     * @return array | false
+     */
+    public function obtenerDatosPorId($idPaquete) {
+        try {
+            $query = "SELECT * FROM Paquete WHERE idPaquete = :idPaquete";
+                      
+            $stmt = $this->conexion->prepare($query);
+            $stmt->bindParam(':idPaquete', $idPaquete, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            error_log("Error al obtener datos de paquete por ID: " . $e->getMessage());
+            return false;
+        }
+    }
 }
