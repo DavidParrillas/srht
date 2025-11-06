@@ -1824,6 +1824,7 @@ textarea.form-control {
     visibility: visible;
 }
 
+/*
 .modal {
     background: var(--bg-lighter);
     border-radius: var(--border-radius-lg);
@@ -1835,6 +1836,7 @@ textarea.form-control {
     transform: scale(0.9);
     transition: var(--transition-base);
 }
+*/
 
 .modal-overlay.active .modal {
     transform: scale(1);
