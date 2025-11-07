@@ -87,7 +87,7 @@ sudo apt install php libapache2-mod-php php-mysql
 - `views/` — Vistas y layouts
 - `config/` — Configuración de base de datos
 - `database/` — Scripts SQL
-- `public/` — Recursos estáticos (opcional)
+- `assets/` — Recursos estáticos (opcional)
 
 
 ---

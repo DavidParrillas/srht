@@ -1,297 +1,344 @@
--- SISTEMA DE RESERVAS HOTEL TORREMOLINOS (SRHT)
--- Script de Creación de Base de Datos MySQL
--- Versión: 1.0
--- Fecha: Octubre 2025
+-- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
+--
+-- Host: localhost    Database: hoteltorremolinos
+-- ------------------------------------------------------
+-- Server version	8.0.43
 
--- Crear la base de datos si no existe
-CREATE DATABASE IF NOT EXISTS hoteltorremolinos
-CHARACTER SET utf8mb4 
-COLLATE utf8mb4_unicode_ci;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-USE hoteltorremolinos;
+--
+-- Table structure for table `Amenidad`
+--
 
--- TABLA: Rol
--- Propósito: Definir los roles del personal (Ej: Recepcionista, Administrador)
-CREATE TABLE Rol (
-    idRol INT AUTO_INCREMENT PRIMARY KEY,
-    NombreRol VARCHAR(50) NOT NULL UNIQUE,
-    DescripcionRol TEXT
-    -- CHECK: (Se mueve al final con ALTER TABLE para evitar Error 1064)
+DROP TABLE IF EXISTS `Amenidad`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Amenidad` (
+  `idAmenidad` int NOT NULL AUTO_INCREMENT,
+  `nombreAmenidad` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Descripcion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`idAmenidad`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Amenidad`
+--
+
+LOCK TABLES `Amenidad` WRITE;
+/*!40000 ALTER TABLE `Amenidad` DISABLE KEYS */;
+INSERT INTO `Amenidad` VALUES (1,'Vista al Mar','Habitación con vista panorámica al océano'),(2,'Jacuzzi','Jacuzzi privado en la habitación'),(3,'Balcón','Balcón privado con mobiliario'),(4,'Cocina Completa','Cocina equipada con electrodomésticos'),(5,'TV Smart','Televisor inteligente con streaming'),(7,'Cama King Size','Habitación con cama extra grande'),(8,'Servicio de Lavandería','Acceso a servicio de lavandería express'),(9,'Mascota Bienvenida','Permitido el alojamiento con mascotas pequeñas');
+/*!40000 ALTER TABLE `Amenidad` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Cliente`
+--
+
+DROP TABLE IF EXISTS `Cliente`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Cliente` (
+  `idCliente` int NOT NULL AUTO_INCREMENT,
+  `DuiCliente` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `CorreoCliente` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `NombreCliente` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `TelefonoCliente` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`idCliente`),
+  UNIQUE KEY `DuiCliente` (`DuiCliente`),
+  KEY `idx_dui` (`DuiCliente`),
+  KEY `idx_nombre` (`NombreCliente`),
+  CONSTRAINT `chk_dui_format` CHECK (regexp_like(`DuiCliente`,_utf8mb4'^[0-9]{8}-[0-9]$'))
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Cliente`
+--
+
+LOCK TABLES `Cliente` WRITE;
+/*!40000 ALTER TABLE `Cliente` DISABLE KEYS */;
+INSERT INTO `Cliente` VALUES (1,'12345678-9','juan.perez@email.com','Juan Perez Lopez','7700-1122'),(2,'98765432-1','ana.gomez@email.com','Ana Gomez Castillo','7899-3344'),(3,'11223344-5','carlos.rodriguez@email.com','Carlos Alberto Rodriguez',NULL),(4,'55667788-0','maria.lopez@email.com','Maria Lopez Herrera','6011-5566'),(5,'99445656-4','josep@hotmail.com','José Armando Paredes','75459656'),(6,'46458195-5','FPortillo@outlook.com','Fatima Portillo','78494545'),(7,'79898163-3','lmartinez.014@gmail.com','Luis Martinez','79465412'),(8,'05390059-5','eportillo29@gmail.com','Erick Portillo','72001050');
+/*!40000 ALTER TABLE `Cliente` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `TipoHabitacion`
+--
+
+DROP TABLE IF EXISTS `TipoHabitacion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `TipoHabitacion` (
+  `idTipoHabitacion` int NOT NULL AUTO_INCREMENT,
+  `NombreTipoHabitacion` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Capacidad` int NOT NULL,
+  `PrecioTipoHabitacion` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`idTipoHabitacion`),
+  UNIQUE KEY `NombreTipoHabitacion` (`NombreTipoHabitacion`),
+  CONSTRAINT `chk_capacidad` CHECK (((`Capacidad` > 0) and (`Capacidad` <= 10))),
+  CONSTRAINT `chk_precio_tipo` CHECK ((`PrecioTipoHabitacion` > 0))
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `TipoHabitacion`
+--
+
+LOCK TABLES `TipoHabitacion` WRITE;
+/*!40000 ALTER TABLE `TipoHabitacion` DISABLE KEYS */;
+INSERT INTO `TipoHabitacion` VALUES (1,'Simple',1,45.00),(2,'Doble',2,75.00),(3,'Suite',4,135.00),(4,'Presidencial',6,280.00);
+/*!40000 ALTER TABLE `TipoHabitacion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Habitacion`
+--
+
+DROP TABLE IF EXISTS `Habitacion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Habitacion` (
+  `idHabitacion` int NOT NULL AUTO_INCREMENT,
+  `idTipoHabitacion` int NOT NULL,
+  `NumeroHabitacion` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `EstadoHabitacion` enum('Disponible','Ocupada','Mantenimiento','Fuera de Servicio') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Disponible',
+  `DetalleHabitacion` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`idHabitacion`),
+  UNIQUE KEY `NumeroHabitacion` (`NumeroHabitacion`),
+  KEY `idx_numero` (`NumeroHabitacion`),
+  KEY `idx_estado` (`EstadoHabitacion`),
+  KEY `idx_tipo` (`idTipoHabitacion`),
+  CONSTRAINT `habitacion_ibfk_1` FOREIGN KEY (`idTipoHabitacion`) REFERENCES `TipoHabitacion` (`idTipoHabitacion`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Habitacion`
+--
+
+LOCK TABLES `Habitacion` WRITE;
+/*!40000 ALTER TABLE `Habitacion` DISABLE KEYS */;
+INSERT INTO `Habitacion` VALUES (2,4,'102','Disponible','Habitación con vista al jardín'),(3,1,'103','Disponible','Necesita reparación de aire acondicionado'),(4,1,'201','Disponible','Habitación con balcón pequeño'),(5,2,'202','Disponible','Vista a la piscina'),(6,2,'203','Disponible','Cama matrimonial, vista a la calle'),(7,2,'301','Disponible','Dos camas individuales'),(8,2,'302','Disponible','Problemas en el baño'),(9,3,'401','Disponible','Con sala de estar y minibar'),(10,3,'402','Disponible','Suite con vista panorámica'),(11,4,'501','Disponible','La más lujosa, con jacuzzi privado'),(12,1,'101','Disponible','');
+/*!40000 ALTER TABLE `Habitacion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `HabitacionAmenidad`
+--
+
+DROP TABLE IF EXISTS `HabitacionAmenidad`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `HabitacionAmenidad` (
+  `idHabitacion` int NOT NULL,
+  `idAmenidad` int NOT NULL,
+  PRIMARY KEY (`idHabitacion`,`idAmenidad`),
+  KEY `idx_habitacion` (`idHabitacion`),
+  KEY `idx_amenidad` (`idAmenidad`),
+  CONSTRAINT `habitacionamenidad_ibfk_1` FOREIGN KEY (`idHabitacion`) REFERENCES `Habitacion` (`idHabitacion`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `habitacionamenidad_ibfk_2` FOREIGN KEY (`idAmenidad`) REFERENCES `Amenidad` (`idAmenidad`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
--- InnoDB: motor de almacenamiento que soporta transacciones y claves foráneas
--- utf8mb4: permite almacenar cualquier carácter Unicode incluidos emojis
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `HabitacionAmenidad`
+--
 
--- TABLA: Usuario
--- Propósito: Almacenar el personal del hotel que usa el sistema
--- Relaciones: 
---    - Muchos a uno con Rol
---    - Uno a muchos con Reserva (quien registra)
-CREATE TABLE Usuario (
-    idUsuario INT AUTO_INCREMENT PRIMARY KEY,    
-    idRol INT NOT NULL,
-    NombreUsuario VARCHAR(100) NOT NULL,
-    ContrasenaUsuario VARCHAR(255) NOT NULL,
-    CorreoUsuario VARCHAR(100) NOT NULL UNIQUE,
-    
-    FOREIGN KEY (idRol) REFERENCES Rol(idRol)
-        ON DELETE RESTRICT 
-        -- RESTRICT: no permite eliminar un rol si tiene usuarios asignados
-        ON UPDATE CASCADE,
-        -- CASCADE: si cambia el ID del rol, se actualiza automáticamente aquí
-    INDEX idx_email (CorreoUsuario),
-    -- INDEX: acelera búsquedas por email (login)
-    INDEX idx_rol (idRol)
-    -- INDEX: acelera consultas que filtran por rol
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `HabitacionAmenidad` WRITE;
+/*!40000 ALTER TABLE `HabitacionAmenidad` DISABLE KEYS */;
+INSERT INTO `HabitacionAmenidad` VALUES (2,1),(2,5),(4,3),(4,5),(5,1),(5,9),(6,7),(7,8),(9,3),(9,4),(9,5),(9,7),(10,1),(10,2),(10,7),(11,1),(11,2),(11,3),(11,4),(11,5),(11,7),(11,8),(11,9),(12,4);
+/*!40000 ALTER TABLE `HabitacionAmenidad` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- =====================================================
--- TABLA: Cliente
--- Propósito: Almacenar información de huéspedes del hotel
--- Relaciones: Uno a muchos con Reserva
--- =====================================================
-CREATE TABLE Cliente (
-    idCliente INT AUTO_INCREMENT PRIMARY KEY,
+--
+-- Table structure for table `Paquete`
+--
 
-    DuiCliente VARCHAR(10) NOT NULL UNIQUE,
-    CorreoCliente VARCHAR(100) NOT NULL,
-    -- Email del cliente para notificaciones y confirmaciones    
-    NombreCliente VARCHAR(150) NOT NULL,
-    -- Nombre completo del huésped
-    -- VARCHAR(150): espacio para nombres compuestos largos 
-    TelefonoCliente VARCHAR(15),
-    -- CHECK: (Se mueve al final con ALTER TABLE para evitar Error 1064)
-    INDEX idx_dui (DuiCliente),
-    -- INDEX: búsquedas rápidas por DUI (campo más usado)
-    INDEX idx_nombre (NombreCliente)
-    -- INDEX: búsquedas por nombre del cliente
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `Paquete`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Paquete` (
+  `idPaquete` int NOT NULL AUTO_INCREMENT,
+  `NombrePaquete` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `DescripcionPaquete` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `TarifaPaquete` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`idPaquete`),
+  KEY `idx_nombre_paquete` (`NombrePaquete`),
+  CONSTRAINT `chk_tarifa_positiva` CHECK ((`TarifaPaquete` > 0))
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- =====================================================
--- TABLA: Paquete
--- Propósito: Almacenar paquetes vacacionales ofrecidos
--- Relaciones: Uno a muchos con Reserva
--- =====================================================
-CREATE TABLE Paquete (
-    idPaquete INT AUTO_INCREMENT PRIMARY KEY,
-    NombrePaquete VARCHAR(100) NOT NULL,
-    -- Nombre comercial del paquete
-    -- Ejemplos: "Todo Incluido", "Media Pensión", "Day Pass" 
-    DescripcionPaquete TEXT NOT NULL,
-    TarifaPaquete DECIMAL(10,2) NOT NULL,
-    CONSTRAINT chk_tarifa_positiva CHECK (TarifaPaquete > 0),
-    -- CHECK: la tarifa debe ser mayor que cero
-    INDEX idx_nombre_paquete (NombrePaquete)
-    -- INDEX: búsquedas rápidas de paquetes por nombre
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+--
+-- Dumping data for table `Paquete`
+--
 
--- =====================================================
--- TABLA: TipoHabitacion
--- Propósito: Categorías de habitaciones (Simple, Doble, Suite)
--- Relaciones: Uno a muchos con Habitacion
--- =====================================================
-CREATE TABLE TipoHabitacion (
-    idTipoHabitacion INT AUTO_INCREMENT PRIMARY KEY,
-    NombreTipoHabitacion VARCHAR(50) NOT NULL UNIQUE,
-    Capacidad INT NOT NULL,
-    -- Número máximo de personas que permite
-    PrecioTipoHabitacion DECIMAL(10,2) NOT NULL,
-    -- Precio base por noche de este tipo de habitación
-    CONSTRAINT chk_capacidad CHECK (Capacidad > 0 AND Capacidad <= 10),
-    -- CHECK: capacidad entre 1 y 10 personas
-    CONSTRAINT chk_precio_tipo CHECK (PrecioTipoHabitacion > 0)
-    -- CHECK: precio debe ser positivo
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `Paquete` WRITE;
+/*!40000 ALTER TABLE `Paquete` DISABLE KEYS */;
+INSERT INTO `Paquete` VALUES (1,'Solo habitación','Uso de las instalaciones y servicios básicos (incluye costo de tarifa por servicios)',10.00),(3,'Media Pensión','Incluye desayuno y cena',40.00),(4,'Todo Incluido','Todas las comidas, bebidas y servicios incluidos',75.00);
+/*!40000 ALTER TABLE `Paquete` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- =====================================================
--- TABLA: Habitacion
--- Propósito: Habitaciones físicas específicas del hotel
--- Relaciones: 
---    - Muchos a uno con TipoHabitacion
---    - Uno a muchos con Reserva
---    - Muchos a muchos con Amenidad
--- CORRECCIÓN: 'Row3' renombrado a 'DetalleHabitacion' por claridad.
--- =====================================================
-CREATE TABLE Habitacion (
-    idHabitacion INT AUTO_INCREMENT PRIMARY KEY,    
-    idTipoHabitacion INT NOT NULL,
-    -- FK: tipo de habitación (Simple, Doble, Suite, etc.)    
-    NumeroHabitacion VARCHAR(10) NOT NULL UNIQUE,
-    -- UNIQUE: no pueden haber dos habitaciones con el mismo número
-    EstadoHabitacion ENUM('Disponible', 'Ocupada', 'Mantenimiento', 'Fuera de Servicio')  
-        NOT NULL DEFAULT 'Disponible',
-    DetalleHabitacion VARCHAR(50), -- Renombrado
-    
-    FOREIGN KEY (idTipoHabitacion) REFERENCES TipoHabitacion(idTipoHabitacion)
-        ON DELETE RESTRICT 
-        -- No permite eliminar un tipo si tiene habitaciones asignadas
-        ON UPDATE CASCADE,
-        -- Actualiza automáticamente si cambia el ID del tipo
-    INDEX idx_numero (NumeroHabitacion),
-    -- INDEX: búsquedas rápidas por número de habitación
-    INDEX idx_estado (EstadoHabitacion),
-    -- INDEX: filtros de disponibilidad
-    INDEX idx_tipo (idTipoHabitacion)
-    -- INDEX: consultas por tipo de habitación
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+--
+-- Table structure for table `Reserva`
+--
 
--- =====================================================
--- TABLA: Amenidad
--- Propósito: Amenidades/servicios adicionales disponibles
--- =====================================================
-CREATE TABLE Amenidad (
-    idAmenidad INT AUTO_INCREMENT PRIMARY KEY,
-    -- ID único para cada amenidad
-    nombreAmenidad VARCHAR(100) NOT NULL,
-    Descripcion VARCHAR(255)
-    -- Nombre de la amenidad ("Vista al Mar", "Jacuzzi", "Balcón")
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `Reserva`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Reserva` (
+  `idReserva` int NOT NULL AUTO_INCREMENT,
+  `idCliente` int NOT NULL,
+  `idPaquete` int NOT NULL,
+  `idHabitacion` int NOT NULL,
+  `CantidadPersonas` int NOT NULL DEFAULT '1',
+  `EstadoReserva` enum('Pendiente','Confirmada','Cancelada','Completada','En Curso') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Pendiente',
+  `EstadoPago` enum('Pendiente','Parcial','Completado') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Pendiente',
+  `FechaEntrada` date NOT NULL,
+  `FechaSalida` date NOT NULL,
+  `CheckIn` datetime DEFAULT NULL,
+  `CheckOut` datetime DEFAULT NULL,
+  `Comentario` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `PrecioHabitacion` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `PrecioPaquete` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `TotalReservacion` decimal(10,2) NOT NULL,
+  `FechaCreacion` datetime NOT NULL,
+  `FechaCancelacion` datetime DEFAULT NULL,
+  `RegistroCambio` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`idReserva`),
+  KEY `idPaquete` (`idPaquete`),
+  KEY `idx_cliente` (`idCliente`),
+  KEY `idx_fechas` (`FechaEntrada`,`FechaSalida`),
+  KEY `idx_estado` (`EstadoReserva`),
+  KEY `idx_habitacion` (`idHabitacion`),
+  CONSTRAINT `reserva_ibfk_1` FOREIGN KEY (`idCliente`) REFERENCES `Cliente` (`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `reserva_ibfk_2` FOREIGN KEY (`idPaquete`) REFERENCES `Paquete` (`idPaquete`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `reserva_ibfk_3` FOREIGN KEY (`idHabitacion`) REFERENCES `Habitacion` (`idHabitacion`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `chk_cantidad_personas` CHECK (((`CantidadPersonas` > 0) and (`CantidadPersonas` <= 10))),
+  CONSTRAINT `chk_fechas` CHECK ((`FechaSalida` > `FechaEntrada`)),
+  CONSTRAINT `chk_total` CHECK ((`TotalReservacion` > 0))
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- =====================================================
--- TABLA: HabitacionAmenidad (Tabla Intermedia)
--- Propósito: Relación muchos a muchos entre Habitacion y Amenidad
--- Una habitación puede tener muchas amenidades
--- Una amenidad puede estar en muchas habitaciones
--- =====================================================
-CREATE TABLE HabitacionAmenidad (
-    idHabitacion INT NOT NULL,
-    idAmenidad INT NOT NULL,
-    -- FK: amenidad específica
-    PRIMARY KEY (idHabitacion, idAmenidad),
-    -- PRIMARY KEY compuesta: combinación única de habitación + amenidad
-    -- Evita duplicados (no puede asignarse la misma amenidad dos veces)
-    FOREIGN KEY (idHabitacion) REFERENCES Habitacion(idHabitacion)
-        ON DELETE CASCADE 
-        -- CASCADE: si se elimina habitación, se eliminan sus amenidades
-        ON UPDATE CASCADE,
-    FOREIGN KEY (idAmenidad) REFERENCES Amenidad(idAmenidad)
-        ON DELETE CASCADE 
-        -- CASCADE: si se elimina amenidad, se eliminan todas sus asignaciones
-        ON UPDATE CASCADE,
-    INDEX idx_habitacion (idHabitacion),
-    INDEX idx_amenidad (idAmenidad)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+--
+-- Dumping data for table `Reserva`
+--
 
--- =====================================================
--- TABLA: Reserva
--- Propósito: Reservaciones realizadas en el hotel (TABLA CENTRAL)
--- Relaciones: 
---    - Muchos a uno con Cliente (quien reserva)
---    - Muchos a uno con Paquete (paquete contratado)
---    - Muchos a uno con Habitacion (habitación asignada)
---    - Uno a muchos con Pago
--- =====================================================
-CREATE TABLE Reserva (
-    idReserva INT AUTO_INCREMENT PRIMARY KEY,
-    idCliente INT NOT NULL,
-    idPaquete INT NOT NULL,
-    -- FK: paquete vacacional contratado
-    -- NOT NULL: toda reserva debe incluir un paquete
-    idHabitacion INT NOT NULL,
-    -- FK: habitación asignada a la reserva
-    -- NOT NULL: toda reserva debe tener habitación asignada
-    EstadoReserva ENUM('Pendiente', 'Confirmada', 'Cancelada', 'Completada')  
-        NOT NULL DEFAULT 'Pendiente',
-    FechaEntrada DATE NOT NULL,
-    FechaSalida DATE NOT NULL,
-    Comentario TEXT,
-    -- Campo para registrar incidencias, solicitudes especiales, notas
-    -- Nullable: no todas las reservas tienen comentarios
-    TotalReservacion DECIMAL(10,2) NOT NULL,
-    -- Monto total de la reserva
-    -- Se calcula: (días * precio habitación) + tarifa paquete
-    
-    FOREIGN KEY (idCliente) REFERENCES Cliente(idCliente)
-        ON DELETE RESTRICT 
-        -- No permite eliminar cliente si tiene reservas
-        ON UPDATE CASCADE,
-    FOREIGN KEY (idPaquete) REFERENCES Paquete(idPaquete)
-        ON DELETE RESTRICT 
-        -- No permite eliminar paquete si tiene reservas activas
-        ON UPDATE CASCADE,
-    FOREIGN KEY (idHabitacion) REFERENCES Habitacion(idHabitacion)
-        ON DELETE RESTRICT 
-        -- No permite eliminar habitación si tiene reservas
-        ON UPDATE CASCADE,
-    CONSTRAINT chk_fechas CHECK (FechaSalida > FechaEntrada),
-    -- CHECK: fecha de salida debe ser posterior a fecha de entrada
-    CONSTRAINT chk_total CHECK (TotalReservacion > 0),
-    -- CHECK: total debe ser positivo
-    INDEX idx_cliente (idCliente),
-    -- INDEX: búsquedas de reservas por cliente
-    INDEX idx_fechas (FechaEntrada, FechaSalida),
-    -- INDEX: filtros por rango de fechas (reportes de ocupación)
-    INDEX idx_estado (EstadoReserva),
-    -- INDEX: filtros por estado de reserva
-    INDEX idx_habitacion (idHabitacion)
-    -- INDEX: consultas de reservas por habitación
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `Reserva` WRITE;
+/*!40000 ALTER TABLE `Reserva` DISABLE KEYS */;
+INSERT INTO `Reserva` VALUES (1,1,1,3,1,'Pendiente','Pendiente','2025-11-10','2025-11-11',NULL,NULL,'Reserva creada sin pago inicial. Pendiente de pago.',45.00,10.00,55.00,'2025-11-05 20:00:00',NULL,NULL),(2,2,4,9,2,'Confirmada','Completado','2025-11-20','2025-11-22',NULL,NULL,'Pagado en su totalidad con tarjeta.',135.00,75.00,420.00,'2025-11-05 20:10:00',NULL,NULL),(3,3,3,5,2,'Confirmada','Parcial','2025-11-12','2025-11-14',NULL,NULL,'Abonó 50%. Pagará el resto al llegar.',75.00,40.00,230.00,'2025-11-05 20:15:00',NULL,NULL),(4,4,1,6,2,'En Curso','Completado','2025-11-04','2025-11-06','2025-11-04 14:00:00',NULL,'Cliente pagó el total en efectivo al llegar.',75.00,10.00,170.00,'2025-11-04 13:50:00',NULL,NULL),(5,5,1,7,2,'Completada','Completado','2025-10-01','2025-10-03','2025-10-01 15:00:00','2025-10-03 11:00:00','Reserva histórica.',75.00,10.00,170.00,'2025-09-30 09:00:00',NULL,NULL),(6,6,4,2,4,'Cancelada','Parcial','2025-11-15','2025-11-16',NULL,NULL,'--- CANCELACIÓN (04-11-2025 10:00 por Sistema) ---\nCliente canceló por motivos de salud.',280.00,75.00,355.00,'2025-11-01 08:00:00','2025-11-04 10:00:00',NULL),(7,7,1,11,1,'Confirmada','Completado','2025-11-05','2025-11-07',NULL,NULL,'Cliente llega hoy. Ya pagó todo.',280.00,10.00,580.00,'2025-11-05 10:00:00',NULL,NULL);
+/*!40000 ALTER TABLE `Reserva` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- =====================================================
--- TABLA: Pago
--- Propósito: Registrar pagos realizados por reservas
--- Relaciones: Muchos a uno con Reserva
--- =====================================================
-CREATE TABLE Pago (
-    idPago INT AUTO_INCREMENT PRIMARY KEY,
-    idReserva INT NOT NULL,
-    MontoPago DECIMAL(10,2) NOT NULL,
-    FormaPago ENUM('Efectivo', 'Tarjeta', 'Transferencia', 'Cheque') NOT NULL,  
-    ComentarioPago TEXT,
-    -- Notas sobre el pago: número de autorización, banco, observaciones
-    -- Nullable: no todos los pagos requieren comentarios
-    
-    FOREIGN KEY (idReserva) REFERENCES Reserva(idReserva)
-        ON DELETE CASCADE 
-        -- CASCADE: si se elimina reserva, se eliminan sus pagos
-        ON UPDATE CASCADE,
-    CONSTRAINT chk_monto_pago CHECK (MontoPago > 0),
-    -- CHECK: monto del pago debe ser positivo
-    INDEX idx_reserva (idReserva),
-    -- INDEX: búsquedas de pagos por reserva
-    INDEX idx_forma_pago (FormaPago)
-    -- INDEX: reportes financieros por forma de pago
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+--
+-- Table structure for table `Pago`
+--
 
+DROP TABLE IF EXISTS `Pago`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Pago` (
+  `idPago` int NOT NULL AUTO_INCREMENT,
+  `idReserva` int NOT NULL,
+  `TipoTransaccion` enum('Depósito','Pago Final','Pago Único','Abono','Pago Transferido','Abono Diferencia') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `FechaPago` datetime NOT NULL,
+  `MontoPago` decimal(10,2) NOT NULL,
+  `FormaPago` enum('Efectivo','Tarjeta','Transferencia') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Comprobante` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ComentarioPago` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`idPago`),
+  KEY `idx_reserva` (`idReserva`),
+  KEY `idx_forma_pago` (`FormaPago`),
+  CONSTRAINT `pago_ibfk_1` FOREIGN KEY (`idReserva`) REFERENCES `Reserva` (`idReserva`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `chk_monto_pago` CHECK ((`MontoPago` > 0))
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- =====================================================
--- RESTRICCIONES CHECK AGREGADAS VÍA ALTER TABLE
--- =====================================================
+--
+-- Dumping data for table `Pago`
+--
 
--- Restricción para Rol: nombre con longitud mínima
-ALTER TABLE Rol 
-ADD CONSTRAINT chk_nombrerol CHECK (LENGTH(NombreRol) >= 3);
+LOCK TABLES `Pago` WRITE;
+/*!40000 ALTER TABLE `Pago` DISABLE KEYS */;
+INSERT INTO `Pago` VALUES (1,2,'Pago Único','2025-11-05 20:11:00',420.00,'Tarjeta','CC-TEST-201',NULL),(2,3,'Depósito','2025-11-05 20:16:00',115.00,'Transferencia','TR-TEST-202',NULL),(3,4,'Pago Único','2025-11-04 13:55:00',170.00,'Efectivo',NULL,NULL),(4,5,'Pago Único','2025-10-01 15:01:00',170.00,'Efectivo',NULL,NULL),(5,6,'Depósito','2025-11-01 08:05:00',177.50,'Transferencia',NULL,NULL),(6,7,'Pago Único','2025-11-05 10:05:00',580.00,'Tarjeta',NULL,NULL);
+/*!40000 ALTER TABLE `Pago` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- Restricción para Cliente: valida formato de DUI
-ALTER TABLE Cliente 
-ADD CONSTRAINT chk_dui_format CHECK (DuiCliente REGEXP '^[0-9]{8}-[0-9]$');
+--
+-- Table structure for table `Rol`
+--
 
--- DATOS INICIALES PRUEBA
+DROP TABLE IF EXISTS `Rol`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Rol` (
+  `idRol` int NOT NULL AUTO_INCREMENT,
+  `NombreRol` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `DescripcionRol` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`idRol`),
+  UNIQUE KEY `NombreRol` (`NombreRol`),
+  CONSTRAINT `chk_nombrerol` CHECK ((length(`NombreRol`) >= 3))
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Insertar roles básicos del sistema
-INSERT INTO Rol (NombreRol, DescripcionRol) VALUES
-('Recepción', 'Personal de recepción encargado de registro de clientes y reservas'),
-('Gerencia', 'Gerente con acceso completo al sistema y reportes'),
-('Subgerencia', 'Subgerente con permisos de gestión y reportes'),
-('Administrador', 'Administrador del sistema con todos los permisos');
+--
+-- Dumping data for table `Rol`
+--
 
--- Insertar tipos de habitación
-INSERT INTO TipoHabitacion (NombreTipoHabitacion, Capacidad, PrecioTipoHabitacion) VALUES
-('Simple', 1, 50.00),
-('Doble', 2, 80.00),
-('Suite', 4, 150.00),
-('Presidencial', 6, 300.00);
+LOCK TABLES `Rol` WRITE;
+/*!40000 ALTER TABLE `Rol` DISABLE KEYS */;
+INSERT INTO `Rol` VALUES (1,'Recepción','Personal de recepción encargado de registro de clientes y reservas'),(2,'Gerencia','Gerente con acceso completo al sistema y reportes'),(3,'Subgerencia','Subgerente con permisos de gestión y reportes'),(4,'Administrador','Administrador del sistema con todos los permisos');
+/*!40000 ALTER TABLE `Rol` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- Insertar paquetes vacacionales
-INSERT INTO Paquete (NombrePaquete, DescripcionPaquete, TarifaPaquete) VALUES
-('Day Pass', 'Acceso a instalaciones por un día, incluye almuerzo', 25.00),
-('Media Pensión', 'Incluye desayuno y cena', 40.00),
-('Todo Incluido', 'Todas las comidas, bebidas y servicios incluidos', 75.00);
+--
+-- Table structure for table `Usuario`
+--
 
--- Insertar amenidades comunes
-INSERT INTO Amenidad (NombreAmenidad, Descripcion) VALUES
-('Vista al Mar', 'Habitación con vista panorámica al océano'),
-('Jacuzzi', 'Jacuzzi privado en la habitación'),
-('Balcón', 'Balcón privado con mobiliario'),
-('Cocina Completa', 'Cocina equipada con electrodomésticos'),
-('TV Smart', 'Televisor inteligente con streaming');
+DROP TABLE IF EXISTS `Usuario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Usuario` (
+  `idUsuario` int NOT NULL AUTO_INCREMENT,
+  `idRol` int NOT NULL,
+  `NombreUsuario` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ContrasenaUsuario` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `CorreoUsuario` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`idUsuario`),
+  UNIQUE KEY `CorreoUsuario` (`CorreoUsuario`),
+  KEY `idx_email` (`CorreoUsuario`),
+  KEY `idx_rol` (`idRol`),
+  CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`idRol`) REFERENCES `Rol` (`idRol`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Usuario`
+--
+
+LOCK TABLES `Usuario` WRITE;
+/*!40000 ALTER TABLE `Usuario` DISABLE KEYS */;
+INSERT INTO `Usuario` VALUES (1,1,'recepcion','$2y$10$9Gv/t/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX','recepcion@example.com'),(2,2,'gerente','$2y$10$9Gv/t/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX','gerente@example.com'),(3,4,'admin','$2y$10$9Gv/t/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX/gX','admin@example.com'),(4,4,'Erick','$2a$12$K.VgMP/Ahg.d5Eclo0EHBuwNFL8kwPKuA1uOkKO4ESN0hh9m5ueL6','erick@hotelterremolinos.com');
+/*!40000 ALTER TABLE `Usuario` ENABLE KEYS */;
+UNLOCK TABLES;
+
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-11-06

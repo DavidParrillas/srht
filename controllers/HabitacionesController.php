@@ -55,7 +55,7 @@ class HabitacionesController
             $idTipo = $_POST['tipoHabitacion'];
             $amenidadesSeleccionadas = $_POST['amenidades'] ?? [];
 
-            $sqlVerificar = "SELECT COUNT(*) AS total FROM Habitacion WHERE numeroHabitacion = :numero";
+            $sqlVerificar = "SELECT COUNT(*) AS total FROM Habitacion WHERE NumeroHabitacion = :numero";
             $stmtVerificar = $this->db->prepare($sqlVerificar);
             $stmtVerificar->execute([':numero' => $numero]);
             $resultado = $stmtVerificar->fetch(PDO::FETCH_ASSOC);

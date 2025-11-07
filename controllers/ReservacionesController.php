@@ -121,13 +121,8 @@ class ReservacionesController
         $idOriginal = $_SESSION['reserva_original_id'] ?? null;
 
         // Pasamos la cantidad de personas al modelo
-        $stmt = $this->reservaModel->obtenerHabitacionesDisponibles(
-            $fechaEntrada,
-            $fechaSalida,
-            $idOriginal,
-            $cantidadPersonas
-        );
-
+        $stmt = $this->reservaModel->obtenerHabitacionesDisponibles($fechaEntrada, $fechaSalida, $cantidadPersonas, $idOriginal);
+        
         $habitaciones = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
 
         $page_title = "Habitaciones Disponibles";
@@ -451,8 +446,9 @@ class ReservacionesController
         AuthController::requerirRol(['Administrador', 'Gerencia', 'Recepción']);
         $filtro_texto = $_GET['filtro_texto'] ?? null;
         $filtro_fecha = $_GET['filtro_fecha'] ?? null;
-        $stmt = $this->reservaModel->obtenerTodas($filtro_texto, $filtro_fecha);
-        $reservas = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+        $stmt = $this->reservaModel->obtenerTodas($filtro_texto, $filtro_fecha); // El modelo devuelve un statement
+        $reservas = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : []; // Extraemos los datos a un array
+
         $page_title = "Reservas";
         $active_page = "reservas";
         $child_view = 'views/reservas/index.php';

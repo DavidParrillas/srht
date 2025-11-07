@@ -27,11 +27,11 @@
                         value="<?= htmlspecialchars($_GET['filtro_fecha'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-info w-auto me-2">
+                    <button type="submit" class="btn btn-secondary me-2">
                         <i class="fas fa-search"></i> Filtrar
                     </button>
-                    <a href="index.php?controller=reservaciones&action=index" class="btn btn-secondary w-auto">
-                        <i class="fas fa-times"></i> Limpiar
+                    <a href="index.php?controller=reservaciones&action=index" class="btn btn-light">
+                        Limpiar
                     </a>
                 </div>
             </div>
@@ -57,7 +57,7 @@
 
         <!-- Tabla de Reservas -->
         <div class="table-responsive">
-            <table class="table table-striped table-hover data-table">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -159,7 +159,7 @@
 
                                 <td style="white-space: nowrap;">
 
-                                    <button type="button" class="btn btn-sm btn-info ms-1 btnVerDetalle" data-bs-toggle="modal"
+                                    <button type="button" class="btn-action btn-info btnVerDetalle" data-bs-toggle="modal"
                                         data-bs-target="#modalDetalleReserva" data-id="<?php echo $row['idReserva']; ?>"
                                         title="Ver Detalle">
                                         <i class="fas fa-eye"></i>
@@ -172,18 +172,18 @@
                                     if ($estado == 'Confirmada'):
                                         ?>
                                         <a href="index.php?controller=reservaciones&action=registrarCheckIn&id=<?php echo $row['idReserva']; ?>"
-                                            class="btn btn-sm btn-success ms-1"
+                                            class="btn-action btn-success"
                                             onclick="return confirm('¿Desea registrar el ingreso de los clientes?');"
                                             title="Registrar Check-In">
                                             <i class="fas fa-sign-in-alt"></i>
                                         </a>
 
                                         <a href="index.php?controller=reservaciones&action=edit&id=<?php echo $row['idReserva']; ?>"
-                                            class="btn btn-sm btn-primary ms-1" title="Editar">
+                                            class="btn-action btn-edit" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
 
-                                        <button type="button" class="btn btn-sm btn-danger ms-1 btnAbrirModalCancelar"
+                                        <button type="button" class="btn-action btn-delete btnAbrirModalCancelar"
                                             data-bs-toggle="modal" data-bs-target="#modalCancelar"
                                             data-id-reserva="<?php echo $row['idReserva']; ?>" title="Cancelar">
                                             <i class="fas fa-ban"></i>
@@ -192,7 +192,7 @@
                                     <?php elseif ($estado == 'En Curso'): ?>
 
                                         <a href="index.php?controller=reservaciones&action=registrarCheckOut&id=<?php echo $row['idReserva']; ?>"
-                                            class="btn btn-sm btn-dark ms-1"
+                                            class="btn-action btn-dark"
                                             onclick="return confirm('¿Desea registrar la salida de los clientes?');"
                                             title="Registrar Check-Out">
                                             <i class="fas fa-sign-out-alt"></i>
@@ -200,7 +200,7 @@
 
                                     <?php elseif ($estado == 'Pendiente'): ?>
 
-                                        <button type="button" class="btn btn-sm btn-danger ms-1 btnAbrirModalCancelar"
+                                        <button type="button" class="btn-action btn-delete btnAbrirModalCancelar"
                                             data-bs-toggle="modal" data-bs-target="#modalCancelar"
                                             data-id-reserva="<?php echo $row['idReserva']; ?>" title="Cancelar">
                                             <i class="fas fa-ban"></i>

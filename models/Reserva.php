@@ -54,9 +54,9 @@ class Reserva
             FROM 
                 Habitacion AS h
             JOIN 
-                tipohabitacion AS th ON h.idTipoHabitacion = th.idTipoHabitacion
+                TipoHabitacion AS th ON h.idTipoHabitacion = th.idTipoHabitacion
             WHERE 
-                th.Capacidad >= :cantidadPersonas -- <-- ¡NUEVO FILTRO DE CAPACIDAD!
+                th.Capacidad >= :cantidadPersonas
             AND 
                 h.idHabitacion NOT IN (
                     SELECT r.idHabitacion 
@@ -125,7 +125,7 @@ class Reserva
             $query = "SELECT th.PrecioTipoHabitacion, 
                                 COALESCE(p.TarifaPaquete, 0) AS precioPaquete
                         FROM Habitacion h
-                        JOIN tipohabitacion th ON h.idTipoHabitacion = th.idTipoHabitacion
+                        JOIN TipoHabitacion th ON h.idTipoHabitacion = th.idTipoHabitacion
                         LEFT JOIN Paquete p ON p.idPaquete = :idPaquete
                         WHERE h.idHabitacion = :idHabitacion";
 
@@ -310,13 +310,13 @@ class Reserva
                 r.PrecioPaquete
 
             FROM 
-                reserva AS r
-            JOIN 
-                cliente AS c ON r.idCliente = c.idCliente
-            JOIN 
-                habitacion AS h ON r.idHabitacion = h.idHabitacion
-            JOIN
-                tipohabitacion AS th ON h.idTipoHabitacion = th.idTipoHabitacion";
+                Reserva AS r
+            LEFT JOIN 
+                Cliente AS c ON r.idCliente = c.idCliente
+            LEFT JOIN 
+                Habitacion AS h ON r.idHabitacion = h.idHabitacion
+            LEFT JOIN
+                TipoHabitacion AS th ON h.idTipoHabitacion = th.idTipoHabitacion";
 
             $where_clauses = [];
             $params = [];
@@ -371,8 +371,8 @@ class Reserva
     {
         try {
             $query = "SELECT h.*, th.PrecioTipoHabitacion, th.NombreTipoHabitacion 
-                        FROM Habitacion h
-                        JOIN tipohabitacion th ON h.idTipoHabitacion = th.idTipoHabitacion
+                        FROM Habitacion h 
+                        JOIN TipoHabitacion th ON h.idTipoHabitacion = th.idTipoHabitacion
                         WHERE h.idHabitacion = :idHabitacion";
 
             $stmt = $this->conexion->prepare($query);
@@ -432,15 +432,15 @@ class Reserva
                     h.NumeroHabitacion,
                     p.NombrePaquete  -- <-- ¡CAMBIO AÑADIDO!
                 FROM 
-                    reserva AS r
+                    Reserva AS r
                 JOIN 
-                    cliente AS c ON r.idCliente = c.idCliente
+                    Cliente AS c ON r.idCliente = c.idCliente
                 JOIN 
-                    habitacion AS h ON r.idHabitacion = h.idHabitacion
+                    Habitacion AS h ON r.idHabitacion = h.idHabitacion
                 JOIN 
-                    tipohabitacion AS th ON h.idTipoHabitacion = th.idTipoHabitacion
+                    TipoHabitacion AS th ON h.idTipoHabitacion = th.idTipoHabitacion
                 LEFT JOIN 
-                    paquete AS p ON r.idPaquete = p.idPaquete -- <-- ¡CAMBIO AÑADIDO!
+                    Paquete AS p ON r.idPaquete = p.idPaquete
                 WHERE 
                     r.idReserva = :idReserva";
 
@@ -459,7 +459,7 @@ class Reserva
     public function obtenerPagosPorReserva($idReserva)
     {
         try {
-            $query = "SELECT * FROM pago 
+            $query = "SELECT * FROM Pago 
                       WHERE idReserva = :idReserva 
                       ORDER BY FechaPago ASC";
 
@@ -478,7 +478,7 @@ class Reserva
     public function agregarPago($idReserva, $monto, $tipoTransaccion, $formaPago, $comprobante = null, $comentarioPago = null)
     {
         try {
-            $query = "INSERT INTO pago 
+            $query = "INSERT INTO Pago 
                         (idReserva, TipoTransaccion, FechaPago, MontoPago, FormaPago, Comprobante, ComentarioPago)
                       VALUES 
                         (:idReserva, :tipoTransaccion, NOW(), :monto, :formaPago, :comprobante, :comentarioPago)";
@@ -508,9 +508,9 @@ class Reserva
                         r.TotalReservacion, 
                         COALESCE(SUM(p.MontoPago), 0) AS TotalPagado
                       FROM 
-                        reserva r
+                        Reserva r
                       LEFT JOIN 
-                        pago p ON r.idReserva = p.idReserva
+                        Pago p ON r.idReserva = p.idReserva
                       WHERE 
                         r.idReserva = :idReserva
                       GROUP BY 
