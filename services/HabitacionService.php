@@ -185,7 +185,7 @@ class HabitacionService
     private function obtenerAmenidadesPorHabitacion($idHabitacion)
     {
         try {
-            $sql = "SELECT idAmenidad FROM habitacionamenidad WHERE idHabitacion = :idHabitacion";
+            $sql = "SELECT idAmenidad FROM HabitacionAmenidad WHERE idHabitacion = :idHabitacion";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':idHabitacion', $idHabitacion, PDO::PARAM_INT);
             $stmt->execute();
@@ -202,7 +202,7 @@ class HabitacionService
     public function listarAmenidades()
     {
         try {
-            $sql = "SELECT idAmenidad, nombreAmenidad FROM amenidad ORDER BY nombreAmenidad ASC";
+            $sql = "SELECT idAmenidad, nombreAmenidad FROM Amenidad ORDER BY nombreAmenidad ASC";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -217,7 +217,7 @@ class HabitacionService
         try {
             $this->conn->beginTransaction();
 
-            $sql = "UPDATE habitacion 
+            $sql = "UPDATE Habitacion 
                 SET EstadoHabitacion = :estado,
                     idTipoHabitacion = :tipo,
                     DetalleHabitacion = :detalle
@@ -229,13 +229,13 @@ class HabitacionService
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
-            $sqlDelete = "DELETE FROM habitacionamenidad WHERE idHabitacion = :id";
+            $sqlDelete = "DELETE FROM HabitacionAmenidad WHERE idHabitacion = :id";
             $stmt = $this->conn->prepare($sqlDelete);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
             if (!empty($amenidades)) {
-                $sqlInsert = "INSERT INTO habitacionamenidad (idHabitacion, idAmenidad) VALUES (:idHabitacion, :idAmenidad)";
+                $sqlInsert = "INSERT INTO HabitacionAmenidad (idHabitacion, idAmenidad) VALUES (:idHabitacion, :idAmenidad)";
                 $stmt = $this->conn->prepare($sqlInsert);
                 foreach ($amenidades as $idAmenidad) {
                     $stmt->execute([
@@ -261,12 +261,12 @@ class HabitacionService
         try {
             $this->conn->beginTransaction();
 
-            $sqlAmenidades = "DELETE FROM habitacionamenidad WHERE idHabitacion = :id";
+            $sqlAmenidades = "DELETE FROM HabitacionAmenidad WHERE idHabitacion = :id";
             $stmt = $this->conn->prepare($sqlAmenidades);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
-            $sqlHabitacion = "DELETE FROM habitacion WHERE idHabitacion = :id";
+            $sqlHabitacion = "DELETE FROM Habitacion WHERE idHabitacion = :id";
             $stmt = $this->conn->prepare($sqlHabitacion);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
