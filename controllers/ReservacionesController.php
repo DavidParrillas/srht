@@ -425,8 +425,8 @@ class ReservacionesController
         $stmt = $this->reservaModel->obtenerHabitacionesDisponibles(
             $fechaEntrada,
             $fechaSalida,
-            $cantidadPersonas,
-            $idReservaAExcluir
+            $cantidadPersonas, // El orden correcto es fecha, fecha, cantidad, id
+            $idReservaAExcluir 
         );
 
         if (!$stmt) {

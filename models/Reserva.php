@@ -32,7 +32,7 @@ class Reserva
         return (strtotime($fechaSalida) > strtotime($fechaEntrada));
     }
 
-    public function obtenerHabitacionesDisponibles($fechaEntrada, $fechaSalida, $idReservaAExcluir = null, $cantidadPersonas = 1)
+    public function obtenerHabitacionesDisponibles($fechaEntrada, $fechaSalida, $cantidadPersonas = 1, $idReservaAExcluir = null)
     {
         try {
             $idExcluir = $idReservaAExcluir ? intval($idReservaAExcluir) : null;
@@ -56,7 +56,7 @@ class Reserva
             JOIN 
                 TipoHabitacion AS th ON h.idTipoHabitacion = th.idTipoHabitacion
             WHERE 
-                th.Capacidad >= :cantidadPersonas
+                th.Capacidad >= :cantidadPersonas -- <-- ¡NUEVO FILTRO DE CAPACIDAD!
             AND 
                 h.idHabitacion NOT IN (
                     SELECT r.idHabitacion 
@@ -74,6 +74,7 @@ class Reserva
             $stmt->bindParam(':fechaEntrada', $fechaEntrada);
             $stmt->bindParam(':fechaSalida', $fechaSalida);
             $stmt->bindParam(':cantidadPersonas', $capacidad, PDO::PARAM_INT);
+
 
             // vinculamos el parámetro si existe una ID de exclusión
             if ($idExcluir) {
@@ -301,21 +302,21 @@ class Reserva
                 r.EstadoReserva,
                 r.FechaEntrada,
                 r.FechaSalida,
-                r.EstadoPago,
-                r.CheckIn,
-                r.CheckOut,
-                r.CantidadPersonas,
-                r.TotalReservacion,
-                r.PrecioHabitacion,
-                r.PrecioPaquete
+                r.EstadoPago, 
+                r.CheckIn, 
+                r.CheckOut, 
+                r.CantidadPersonas, 
+                r.TotalReservacion, 
+                r.PrecioHabitacion, 
+                r.PrecioPaquete 
 
             FROM 
                 Reserva AS r
-            LEFT JOIN 
+            JOIN 
                 Cliente AS c ON r.idCliente = c.idCliente
-            LEFT JOIN 
+            JOIN 
                 Habitacion AS h ON r.idHabitacion = h.idHabitacion
-            LEFT JOIN
+            JOIN
                 TipoHabitacion AS th ON h.idTipoHabitacion = th.idTipoHabitacion";
 
             $where_clauses = [];
@@ -440,7 +441,7 @@ class Reserva
                 JOIN 
                     TipoHabitacion AS th ON h.idTipoHabitacion = th.idTipoHabitacion
                 LEFT JOIN 
-                    Paquete AS p ON r.idPaquete = p.idPaquete
+                    Paquete AS p ON r.idPaquete = p.idPaquete -- <-- ¡CAMBIO AÑADIDO!
                 WHERE 
                     r.idReserva = :idReserva";
 
@@ -451,7 +452,7 @@ class Reserva
             return $stmt->fetch(PDO::FETCH_ASSOC);
 
         } catch (PDOException $e) {
-            error_log("Error al obtener reserva por ID: " + $e->getMessage());
+            error_log("Error al obtener reserva por ID: " . $e->getMessage());
             return false;
         }
     }

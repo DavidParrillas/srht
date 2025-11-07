@@ -157,7 +157,7 @@ class HabitacionesController
             exit();
         }
 
-        $actualizado = $this->habitacionService->actualizarHabitacion($id, $tipo, $estado, $detalle, $amenidades); // El orden de los parámetros es importante
+        $actualizado = $this->habitacionService->actualizarHabitacion($id, $tipo, $estado, $detalle, $amenidades);
 
         if ($actualizado) {
             $_SESSION['success'] = "La habitación se actualizó correctamente."; // Mensaje de éxito

@@ -390,10 +390,10 @@ class Clientes {
                             th.NombreTipoHabitacion,
                             p.NombrePaquete, 
                             p.TarifaPaquete
-                    FROM Reserva r
-                    INNER JOIN Habitacion h ON r.idHabitacion = h.idHabitacion
-                    INNER JOIN TipoHabitacion th ON h.idTipoHabitacion = th.idTipoHabitacion
-                    INNER JOIN Paquete p ON r.idPaquete = p.idPaquete
+                    FROM Reserva r 
+                    INNER JOIN Habitacion h ON r.idHabitacion = h.idHabitacion 
+                    INNER JOIN TipoHabitacion th ON h.idTipoHabitacion = th.idTipoHabitacion 
+                    LEFT JOIN Paquete p ON r.idPaquete = p.idPaquete
                     WHERE r.idCliente = :idCliente
                     ORDER BY r.FechaEntrada DESC";
             

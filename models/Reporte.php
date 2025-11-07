@@ -79,7 +79,7 @@ class Reporte {
                     COUNT(pa.idPago) AS NumeroPagos,
                     SUM(pa.MontoPago) AS TotalIngresos
                 FROM Pago pa
-                JOIN Reserva r ON pa.idReserva = r.idReserva
+                JOIN Reserva r ON pa.idReserva = r.idReserva -- Corregido aquí
                 LEFT JOIN Paquete p ON r.idPaquete = p.idPaquete
                 WHERE pa.FechaPago >= :fechaInicio 
                   AND pa.FechaPago < DATE_ADD(:fechaFin, INTERVAL 1 DAY)
@@ -138,45 +138,33 @@ class Reporte {
      */
     public function getDashboardStats() {
         try {
-            $stats = [];
-            $hoy_inicio = date('Y-m-d 00:00:00');
-            $hoy_fin = date('Y-m-d 23:59:59');
-            $hoy_fecha = date('Y-m-d');
+            $stats = [
+                'total_clientes' => 0,
+                'total_usuarios' => 0,
+                'total_habitaciones' => 0,
+                'total_paquetes' => 0,
+                'total_reservaciones' => 0,
+            ];
 
-            // 1. Check-ins para hoy (más útil que 'reservas creadas hoy')
-            $stmt = $this->conexion->prepare("SELECT COUNT(idReserva) FROM Reserva WHERE FechaEntrada = :hoy_fecha AND EstadoReserva IN ('Confirmada', 'En Curso')");
-            $stmt->bindParam(':hoy_fecha', $hoy_fecha);
-            $stmt->execute();
-            $stats['checkins_hoy'] = $stmt->fetchColumn();
+            // 1. Total de Clientes
+            $stmt = $this->conexion->query("SELECT COUNT(idCliente) FROM Cliente");
+            $stats['total_clientes'] = $stmt->fetchColumn();
 
-            // 2. Ingresos del día
-            // CORRECCIÓN: Se usa un rango de fechas para optimizar la consulta (usa índices).
-            $stmt = $this->conexion->prepare("SELECT SUM(MontoPago) FROM Pago WHERE FechaPago BETWEEN :hoy_inicio AND :hoy_fin");
-            $stmt->bindParam(':hoy_inicio', $hoy_inicio);
-            $stmt->bindParam(':hoy_fin', $hoy_fin);
-            $stmt->execute();
-            $stats['ingresos_dia'] = $stmt->fetchColumn() ?? 0;
+            // 2. Total de Usuarios
+            $stmt = $this->conexion->query("SELECT COUNT(idUsuario) FROM Usuario");
+            $stats['total_usuarios'] = $stmt->fetchColumn();
 
-            // 3. Habitaciones ocupadas (reservas activas hoy)
-            // La lógica original es correcta, solo se ajusta el parámetro.
-            $stmt = $this->conexion->prepare(
-                "SELECT COUNT(DISTINCT idHabitacion) FROM Reserva 
-                 WHERE :hoy >= FechaEntrada AND :hoy < FechaSalida AND EstadoReserva IN ('Confirmada', 'En Curso')"
-            );
-            $stmt->bindParam(':hoy', $hoy_fecha);
-            $stmt->execute();
-            $stats['habitaciones_ocupadas'] = $stmt->fetchColumn();
-
-            // 4. Total de habitaciones
+            // 3. Total de Habitaciones
             $stmt = $this->conexion->query("SELECT COUNT(idHabitacion) FROM Habitacion");
             $stats['total_habitaciones'] = $stmt->fetchColumn();
 
-            // 5. Check-outs para hoy
-            // CORRECCIÓN: Se incluyen reservas 'Completada' para contar también las que ya hicieron check-out hoy.
-            $stmt = $this->conexion->prepare("SELECT COUNT(idReserva) FROM Reserva WHERE FechaSalida = :hoy_fecha AND EstadoReserva IN ('Confirmada', 'En Curso', 'Completada')");
-            $stmt->bindParam(':hoy_fecha', $hoy_fecha);
-            $stmt->execute();
-            $stats['checkouts_hoy'] = $stmt->fetchColumn();
+            // 4. Total de Paquetes
+            $stmt = $this->conexion->query("SELECT COUNT(idPaquete) FROM Paquete");
+            $stats['total_paquetes'] = $stmt->fetchColumn();
+
+            // 5. Total de Reservaciones
+            $stmt = $this->conexion->query("SELECT COUNT(idReserva) FROM Reserva");
+            $stats['total_reservaciones'] = $stmt->fetchColumn();
 
             return $stats;
 

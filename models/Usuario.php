@@ -371,5 +371,24 @@ class Usuario {
             return false;
         }
     }
+
+    /**
+     * Contar total de usuarios
+     * @return int Número total de usuarios
+     */
+    public function contarUsuarios() {
+        try {
+            $query = "SELECT COUNT(*) as total FROM Usuario";
+            $stmt = $this->conexion->prepare($query);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return intval($row['total']);
+
+        } catch (PDOException $e) {
+            error_log("Error al contar usuarios: " . $e->getMessage());
+            return 0;
+        }
+    }
 }
 ?>
