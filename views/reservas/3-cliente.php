@@ -37,13 +37,6 @@ $esEdicion = !empty($_SESSION['reserva_original_id']);
                     <div id="resultadosCliente" class="mt-2 list-group" style="max-height: 300px; overflow-y: auto;">
                         <!-- Los resultados de la búsqueda aparecerán aquí -->
                     </div>
-
-                    <p class="mt-3">¿No encuentras al cliente?</p>
-                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                        data-bs-target="#modalNuevoCliente">
-                        <i class="fas fa-plus"></i> Crear Cliente Nuevo
-                    </button>
-
                 </div> <!-- Fin .card-body -->
 
                 <!-- FOOTER PARA BOTONES -->
