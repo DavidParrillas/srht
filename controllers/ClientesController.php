@@ -180,7 +180,7 @@ class ClientesController {
             // Obtener datos del cliente
             $this->clienteModel->idCliente = $idCliente;
             
-            if (!$this->clienteModel->obtenerPorId()) {
+            if (!$this->clienteModel->obtener()) {
                 throw new Exception('Cliente no encontrado');
             }
             
@@ -312,7 +312,7 @@ class ClientesController {
             // Verificar si el cliente existe
             $this->clienteModel->idCliente = $idCliente;
             
-            if (!$this->clienteModel->obtenerPorId()) {
+            if (!$this->clienteModel->obtener()) {
                 throw new Exception('Cliente no encontrado');
             }
             

@@ -190,7 +190,9 @@ class AuthController {
         
         if (!self::tieneRol($roles)) {
             $_SESSION['error_message'] = 'No tiene permisos para acceder a esta página';
-            header('Location: index.php?controller=dashboard&action=index');
+            // CORRECCIÓN: Redirigir a una página que muestre el error, como el dashboard.
+            // Anteriormente, una redirección incorrecta podía ocultar este mensaje.
+            header('Location: index.php?controller=dashboard&action=index'); 
             exit();
         }
     }

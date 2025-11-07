@@ -12,12 +12,12 @@ class Habitacion
 
     public function __construct($id = null, $tipoHabitacion = null, $numero = '', $estado = '', $detalle = '')
     {
-        $this->idHabitacion = $id;
-         $this->tipoHabitacion = $tipoHabitacion;
+        $this->idHabitacion = $id; // Primero el ID
+        $this->tipoHabitacion = $tipoHabitacion;
         $this->numeroHabitacion = $numero;
         $this->estadoHabitacion = $estado;
         $this->detalleHabitacion = $detalle;
-       
+        $this->amenidadesIds = []; // Inicializar como array vacío
     }
 
     public function getIdHabitacion()

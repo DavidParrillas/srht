@@ -25,7 +25,7 @@
                     <label for="numero" class="form-label">Número de Habitación *</label>
                     <input type="text" class="form-control" id="numero" name="numero"
                         value="<?= htmlspecialchars($habitacion->getNumeroHabitacion()) ?>" readonly
-                        style="background-color: #e9ecef; color: #6c757d; cursor: not-allowed;">
+                        style="background-color: #e9ecef; cursor: not-allowed;">
                 </div>
 
                 <div class="col-md-6 mb-3">

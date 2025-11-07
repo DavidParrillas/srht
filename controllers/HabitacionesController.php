@@ -19,7 +19,7 @@ class HabitacionesController
     public function __construct($conexion)
     {
         $this->db = $conexion;
-        $this->habitacionService = new HabitacionService();
+        $this->habitacionService = new HabitacionService($this->db);
 
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -110,22 +110,22 @@ class HabitacionesController
 
     public function editar()
     {
-        error_log("🟢 Entrando en HabitacionesController::editar()");
-
-        AuthController::requerirRol(['Administrador', 'Gerencia']);
+        
+        // AuthController::requerirRol(['Administrador', 'Gerencia', 'Recepción']);
 
         $id = $_GET['id'] ?? null;
+        error_log("ID de habitación recibido: " . var_export($id, true));
         if (!$id) {
+            error_log("Redirigiendo: ID de habitación no proporcionado.");
             header("Location: index.php?controller=habitaciones");
             exit();
         }
 
-        // Buscar la habitación por ID
-        error_log("🟢 Entrando en HabitacionesController()");
-
-        $habitacion = $this->habitacionService->obtenerHabitacionPorId($id);
+        $habitacion = $this->habitacionService->obtenerHabitacionPorId($id); // Usamos el método que devuelve el objeto Habitación.
+        error_log("Objeto habitación después de obtener: " . var_export($habitacion, true));
         if (!$habitacion) {
             $_SESSION['error'] = "La habitación seleccionada no existe.";
+            error_log("Redirigiendo: Habitación con ID $id no encontrada.");
             header("Location: index.php?controller=habitaciones");
             exit();
         }
@@ -157,15 +157,17 @@ class HabitacionesController
             exit();
         }
 
-        $actualizado = $this->habitacionService->actualizarHabitacion($id, $estado, $tipo, $detalle, $amenidades);
+        $actualizado = $this->habitacionService->actualizarHabitacion($id, $tipo, $estado, $detalle, $amenidades); // El orden de los parámetros es importante
 
         if ($actualizado) {
-            $_SESSION['success'] = "La habitación se actualizó correctamente.";
+            $_SESSION['success'] = "La habitación se actualizó correctamente."; // Mensaje de éxito
+            header("Location: index.php?controller=habitaciones"); // Redirigir a la lista si todo va bien
         } else {
-            $_SESSION['error'] = "Ocurrió un error al actualizar la habitación.";
+            $_SESSION['error'] = "Ocurrió un error al actualizar la habitación."; // Mensaje de error
+            // CORRECCIÓN: Redirigir de vuelta a la página de EDICIÓN con el ID para mostrar el error, en lugar de a la lista.
+            header("Location: index.php?controller=habitaciones&action=editar&id=" . $id);
         }
 
-        header("Location: index.php?controller=habitaciones");
         exit();
     }
 

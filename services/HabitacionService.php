@@ -7,12 +7,9 @@ class HabitacionService
 {
     private $conn;
 
-    public function __construct()
+    public function __construct($db)
     {
-        $dbConfig = include 'config/database.php';
-        $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']};charset=utf8mb4";
-        $this->conn = new PDO($dsn, $dbConfig['user'], $dbConfig['password']);
-        $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->conn = $db;
     }
 
     public function listarHabitaciones()
@@ -111,15 +108,15 @@ class HabitacionService
         try {
             $sql = "SELECT 
                     h.idHabitacion,
-                    h.NumeroHabitacion AS numeroHabitacion,
-                    h.EstadoHabitacion AS estadoHabitacion,
-                    h.DetalleHabitacion AS detalleHabitacion,
+                    h.numeroHabitacion AS numeroHabitacion,
+                    h.estadoHabitacion AS estadoHabitacion,
+                    h.detalleHabitacion AS detalleHabitacion,
                     t.idTipoHabitacion,
-                    t.nombreTipoHabitacion AS tipoNombre,
-                    t.precioTipoHabitacion AS precio,
+                    t.nombreTipoHabitacion AS nombreTipoHabitacion,
+                    t.precioTipoHabitacion AS precioTipoHabitacion,
                     t.capacidad
-                FROM habitacion h
-                JOIN tipohabitacion t ON h.idTipoHabitacion = t.idTipoHabitacion
+                FROM Habitacion h
+                JOIN TipoHabitacion t ON h.idTipoHabitacion = t.idTipoHabitacion
                 WHERE h.idHabitacion = :id";
 
             $stmt = $this->conn->prepare($sql);
@@ -136,9 +133,9 @@ class HabitacionService
 
             $tipo = new TipoHabitacion(
                 $data['idTipoHabitacion'],
-                $data['tipoNombre'],
+                $data['nombreTipoHabitacion'],
                 $data['capacidad'],
-                $data['precio']
+                $data['precioTipoHabitacion']
             );
 
             $habitacion = new Habitacion();
@@ -156,6 +153,34 @@ class HabitacionService
         }
     }
 
+    /**
+     * Obtiene una habitación por su ID, incluyendo sus amenidades asociadas.
+     *
+     * @param int $id El ID de la habitación.
+     * @return Habitacion|null El objeto Habitacion con sus amenidades o null si no se encuentra.
+     */
+    public function obtenerHabitacionConAmenidadesPorId($id)
+    {
+        // Primero, obtenemos la habitación base
+        $habitacion = $this->obtenerHabitacionPorId($id);
+
+        if (!$habitacion) {
+            return null; // Si no se encuentra la habitación, no hay nada más que hacer.
+        }
+
+        // Ahora, obtenemos las amenidades asociadas a esa habitación
+        $sqlAmenidades = "SELECT idAmenidad FROM HabitacionAmenidad WHERE idHabitacion = :idHabitacion";
+        $stmtAmenidades = $this->conn->prepare($sqlAmenidades);
+        $stmtAmenidades->execute([':idHabitacion' => $id]);
+        
+        // fetchAll con PDO::FETCH_COLUMN nos da un array plano de IDs, ej: [1, 3, 5]
+        $amenidadesIds = $stmtAmenidades->fetchAll(PDO::FETCH_COLUMN);
+
+        // Asignamos el array de IDs de amenidades al objeto habitación
+        $habitacion->setAmenidadesIds($amenidadesIds);
+
+        return $habitacion;
+    }
 
     private function obtenerAmenidadesPorHabitacion($idHabitacion)
     {
@@ -187,7 +212,7 @@ class HabitacionService
         }
     }
 
-    public function actualizarHabitacion($id, $estado, $idTipoHabitacion, $detalle, array $amenidades)
+    public function actualizarHabitacion($id, $idTipoHabitacion, $estado, $detalle, array $amenidades)
     {
         try {
             $this->conn->beginTransaction();

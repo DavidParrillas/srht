@@ -425,8 +425,8 @@ class ReservacionesController
         $stmt = $this->reservaModel->obtenerHabitacionesDisponibles(
             $fechaEntrada,
             $fechaSalida,
-            $idReservaAExcluir,
-            $cantidadPersonas
+            $cantidadPersonas,
+            $idReservaAExcluir
         );
 
         if (!$stmt) {
