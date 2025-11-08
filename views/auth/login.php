@@ -20,7 +20,7 @@
             <div class="login-header">
                 <img src="assets/images/log.png" alt="Logo Hotel Torremolinos" class="login-logo">
                 <h1>Iniciar Sesión</h1>
-                <p class="text-muted">Sistema de Reservaciones</p>
+                <p class="text-muted">Sistema de Reservaciones Torremolinos</p>
             </div>
             
             <!-- Mensajes de error -->
